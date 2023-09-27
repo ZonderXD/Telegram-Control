@@ -1,6 +1,6 @@
 script_name('Telegram Control')
 script_author('nist1')
-script_version('1.0')
+script_version('1.1')
 script_properties('work-in-pause')
 
 local imgui_check, imgui			= pcall(require, 'mimgui')
@@ -27,9 +27,9 @@ if not imgui_check or not samp_check or not effil_check or not requests_check th
 		}
 		local libs_no_found = {}
 		for k, v in pairs(libs) do
-			if not v then sampAddChatMessage('[Telegram Control]{FFFFFF} У Вас отсутствует библиотека {308ad9}' .. k .. '{FFFFFF}. Без неё скрипт {308ad9}не будет {FFFFFF}работать!', 0x308ad9); table.insert(libs_no_found, k) end
+			if not v then sampAddChatMessage('[Telegram Control]{FFFFFF} РЈ Р’Р°СЃ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ Р±РёР±Р»РёРѕС‚РµРєР° {308ad9}' .. k .. '{FFFFFF}. Р‘РµР· РЅРµС‘ СЃРєСЂРёРїС‚ {308ad9}РЅРµ Р±СѓРґРµС‚ {FFFFFF}СЂР°Р±РѕС‚Р°С‚СЊ!', 0x308ad9); table.insert(libs_no_found, k) end
 		end
-		sampShowDialog(18364, '{308ad9}Telegram Control', string.format('{FFFFFF}В Вашей сборке {308ad9}нету необходимых библиотек{FFFFFF} для работы скрипта.\nБез них он {308ad9}не будет{FFFFFF} работать!\n\nБиблиотеки, которые Вам нужны:\n{FFFFFF}- {308ad9}%s\n\n{FFFFFF}Все библиотеки можно скачать на BlastHack: {308ad9}https://www.blast.hk\n{FFFFFF}Там же Вы {308ad9}найдете инструкцию {FFFFFF}для их установки.', table.concat(libs_no_found, '\n{FFFFFF}- {7172ee}')), 'Принять', '', 0)
+		sampShowDialog(18364, '{308ad9}Telegram Control', string.format('{FFFFFF}Р’ Р’Р°С€РµР№ СЃР±РѕСЂРєРµ {308ad9}РЅРµС‚Сѓ РЅРµРѕР±С…РѕРґРёРјС‹С… Р±РёР±Р»РёРѕС‚РµРє{FFFFFF} РґР»СЏ СЂР°Р±РѕС‚С‹ СЃРєСЂРёРїС‚Р°.\nР‘РµР· РЅРёС… РѕРЅ {308ad9}РЅРµ Р±СѓРґРµС‚{FFFFFF} СЂР°Р±РѕС‚Р°С‚СЊ!\n\nР‘РёР±Р»РёРѕС‚РµРєРё, РєРѕС‚РѕСЂС‹Рµ Р’Р°Рј РЅСѓР¶РЅС‹:\n{FFFFFF}- {308ad9}%s\n\n{FFFFFF}Р’СЃРµ Р±РёР±Р»РёРѕС‚РµРєРё РјРѕР¶РЅРѕ СЃРєР°С‡Р°С‚СЊ РЅР° BlastHack: {308ad9}https://www.blast.hk\n{FFFFFF}РўР°Рј Р¶Рµ Р’С‹ {308ad9}РЅР°Р№РґРµС‚Рµ РёРЅСЃС‚СЂСѓРєС†РёСЋ {FFFFFF}РґР»СЏ РёС… СѓСЃС‚Р°РЅРѕРІРєРё.', table.concat(libs_no_found, '\n{FFFFFF}- {7172ee}')), 'РџСЂРёРЅСЏС‚СЊ', '', 0)
 		thisScript():unload()
 	end
 	return
@@ -76,7 +76,7 @@ function json(path)
 			file:write(encodeJson(array))
 			file:close()
 		else
-			msg('Ошибка при сохранении файла конфига!')
+			msg('РћС€РёР±РєР° РїСЂРё СЃРѕС…СЂР°РЅРµРЅРёРё С„Р°Р№Р»Р° РєРѕРЅС„РёРіР°!')
 		end
 	end
 
@@ -121,7 +121,7 @@ local jsonConfig = json('Config.json'):load({
 -->> Autoupdate Settings
 local update_url = 'https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/update.ini'
 local update_path = getWorkingDirectory()..'\\Telegram Control\\update.ini'
-local script_utl = ''
+local script_utl = 'https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/Telegram%20Control.lua'
 local script_path = thisScript().path
 local update_state = false
 
@@ -144,11 +144,17 @@ function main()
    getLastUpdate()
    lua_thread.create(get_telegram_updates)
    while not sampIsLocalPlayerSpawned() do wait(0) end
-	msg('Загружен! Активация: {308ad9}/tgc')
+	msg('Р—Р°РіСЂСѓР¶РµРЅ! РђРєС‚РёРІР°С†РёСЏ: {308ad9}/tgc')
 	sampRegisterChatCommand('tgc', function() WinState[0] = not WinState[0] end)
    checkUpdates()
 	while true do wait(0)
       if update_state then
+         downloadUrlToFile(script_url, script_path, function(id, status)
+            if status == dlstatus.STATUS_ENDDOWNLOADDATA then
+               msg('РћР±РЅРѕРІР»РµРЅРёРµ СѓСЃРїРµС€РЅРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ!')
+               thisScript():reload()
+            end
+         end)
          break
       end
 	end
@@ -183,16 +189,16 @@ imgui.OnFrame(function() return WinState[0] end,
          imgui.SetCursorPosY(30 / 2)
          imgui.Image(logo, imgui.ImVec2(200, 130))
          imgui.SetCursorPosY(160)
-         if imgui.Button(u8'Уведомления', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'РЈРІРµРґРѕРјР»РµРЅРёСЏ', imgui.ImVec2(200,40)) then
             tab = 1
          end
-         if imgui.Button(u8'Обновления', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'РћР±РЅРѕРІР»РµРЅРёСЏ', imgui.ImVec2(200,40)) then
             tab = 2
          end
-         if imgui.Button(u8'Настройки', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'РќР°СЃС‚СЂРѕР№РєРё', imgui.ImVec2(200,40)) then
             tab = 3
          end
-         if imgui.Button(u8'Автор', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'РђРІС‚РѕСЂ', imgui.ImVec2(200,40)) then
             tab = 4
          end
       imgui.EndGroup()
@@ -202,114 +208,122 @@ imgui.OnFrame(function() return WinState[0] end,
       imgui.BeginChild('##right', imgui.ImVec2(-1, -1), true, imgui.WindowFlags.NoScrollbar)
       if tab == 1 then
          imgui.PushFont(fonts[15])
-			imgui.Text(u8('1 Шаг: Открываем Telegram и заходим в бота «@BotFather»')); imgui.SameLine(); imgui.Link('(https://t.me/BotFather)', 'https://t.me/BotFather')
-			imgui.Text(u8('2 Шаг: Вводим команду «/newbot» и следуем инструкциям'))
-			imgui.Text(u8('3 Шаг: После успешного создания бота Вы получите токен')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('· Пример сообщения с токеном:')); imgui.SameLine(); imgui.TextDisabled('Use this token to access the HTTP API: 6123464634:AAHgee28hWg5yCFICHfeew231pmKhh19c')
-			imgui.Text(u8('4 Шаг: Вам нужно узнать ID своего юзера. Для этого я использовал бота «@getmyid_bot»')); imgui.SameLine(); imgui.Link('(https://t.me/getmyid_bot)', 'https://t.me/getmyid_bot')
-			imgui.Text(u8('5 Шаг: Пишем боту «@getmyid_bot» в личку и Вам отправится ID Вашего юзера в поле «Your user ID»')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('· Пример сообщения с ID юзера:')); imgui.SameLine(); imgui.TextDisabled('Your user ID: 1950130')
-			imgui.Text(u8('6 Шаг: Теперь нам нужно ввести токен и ID юзера в поля ниже. После нажмите на кнопку «Тестовое сообщение» в скрипте')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('· Если Вам в личку отправится сообщение, то Вы всё сделали правильно'))
+			imgui.Text(u8('1 РЁР°Рі: РћС‚РєСЂС‹РІР°РµРј Telegram Рё Р·Р°С…РѕРґРёРј РІ Р±РѕС‚Р° В«@BotFatherВ»')); imgui.SameLine(); imgui.Link('(https://t.me/BotFather)', 'https://t.me/BotFather')
+			imgui.Text(u8('2 РЁР°Рі: Р’РІРѕРґРёРј РєРѕРјР°РЅРґСѓ В«/newbotВ» Рё СЃР»РµРґСѓРµРј РёРЅСЃС‚СЂСѓРєС†РёСЏРј'))
+			imgui.Text(u8('3 РЁР°Рі: РџРѕСЃР»Рµ СѓСЃРїРµС€РЅРѕРіРѕ СЃРѕР·РґР°РЅРёСЏ Р±РѕС‚Р° Р’С‹ РїРѕР»СѓС‡РёС‚Рµ С‚РѕРєРµРЅ')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('В· РџСЂРёРјРµСЂ СЃРѕРѕР±С‰РµРЅРёСЏ СЃ С‚РѕРєРµРЅРѕРј:')); imgui.SameLine(); imgui.TextDisabled('Use this token to access the HTTP API: 6123464634:AAHgee28hWg5yCFICHfeew231pmKhh19c')
+			imgui.Text(u8('4 РЁР°Рі: Р’Р°Рј РЅСѓР¶РЅРѕ СѓР·РЅР°С‚СЊ ID СЃРІРѕРµРіРѕ СЋР·РµСЂР°. Р”Р»СЏ СЌС‚РѕРіРѕ СЏ РёСЃРїРѕР»СЊР·РѕРІР°Р» Р±РѕС‚Р° В«@getmyid_botВ»')); imgui.SameLine(); imgui.Link('(https://t.me/getmyid_bot)', 'https://t.me/getmyid_bot')
+			imgui.Text(u8('5 РЁР°Рі: РџРёС€РµРј Р±РѕС‚Сѓ В«@getmyid_botВ» РІ Р»РёС‡РєСѓ Рё Р’Р°Рј РѕС‚РїСЂР°РІРёС‚СЃСЏ ID Р’Р°С€РµРіРѕ СЋР·РµСЂР° РІ РїРѕР»Рµ В«Your user IDВ»')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('В· РџСЂРёРјРµСЂ СЃРѕРѕР±С‰РµРЅРёСЏ СЃ ID СЋР·РµСЂР°:')); imgui.SameLine(); imgui.TextDisabled('Your user ID: 1950130')
+			imgui.Text(u8('6 РЁР°Рі: РўРµРїРµСЂСЊ РЅР°Рј РЅСѓР¶РЅРѕ РІРІРµСЃС‚Рё С‚РѕРєРµРЅ Рё ID СЋР·РµСЂР° РІ РїРѕР»СЏ РЅРёР¶Рµ. РџРѕСЃР»Рµ РЅР°Р¶РјРёС‚Рµ РЅР° РєРЅРѕРїРєСѓ В«РўРµСЃС‚РѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµВ» РІ СЃРєСЂРёРїС‚Рµ')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('В· Р•СЃР»Рё Р’Р°Рј РІ Р»РёС‡РєСѓ РѕС‚РїСЂР°РІРёС‚СЃСЏ СЃРѕРѕР±С‰РµРЅРёРµ, С‚Рѕ Р’С‹ РІСЃС‘ СЃРґРµР»Р°Р»Рё РїСЂР°РІРёР»СЊРЅРѕ'))
 			imgui.PopFont()
 
 			imgui.NewLine()
 
 			imgui.SetCursorPosY(255)
-			imgui.CenterText(u8(' Данные для бота:'))
+			imgui.CenterText(u8(' Р”Р°РЅРЅС‹Рµ РґР»СЏ Р±РѕС‚Р°:'))
          imgui.SetCursorPosX((imgui.GetWindowWidth() - 300) / 2)
 			imgui.BeginGroup()
 				imgui.PushItemWidth(300)
-					if imgui.InputTextWithHint('##inputToken', u8('Введите токен'), inputToken, ffi.sizeof(inputToken), imgui.InputTextFlags.Password) then
+					if imgui.InputTextWithHint('##inputToken', u8('Р’РІРµРґРёС‚Рµ С‚РѕРєРµРЅ'), inputToken, ffi.sizeof(inputToken), imgui.InputTextFlags.Password) then
 						jsonConfig['notifications'].inputToken = ffi.string(inputToken)
 						json('Config.json'):save(jsonConfig)
 					end
-					if imgui.InputTextWithHint('##inputUser', u8('Введите ID юзера'), inputUser, ffi.sizeof(inputUser), imgui.InputTextFlags.Password) then
+					if imgui.InputTextWithHint('##inputUser', u8('Р’РІРµРґРёС‚Рµ ID СЋР·РµСЂР°'), inputUser, ffi.sizeof(inputUser), imgui.InputTextFlags.Password) then
 						jsonConfig['notifications'].inputUser = ffi.string(inputUser)
 						json('Config.json'):save(jsonConfig)
 					end
 				imgui.PopItemWidth()
-				if imgui.Button(u8('Тестовое сообщение'), imgui.ImVec2(300)) then
-					sendTelegramNotification('Тестовое сообщение!')
+				if imgui.Button(u8('РўРµСЃС‚РѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ'), imgui.ImVec2(300)) then
+					sendTelegramNotification('РўРµСЃС‚РѕРІРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ!')
 				end
 			imgui.EndGroup()
       elseif tab == 2 then
-         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Список Обновлений:'), 30).x) / 2 )
-			imgui.FText(u8('Список Обновлений:'), 30)
+         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('РЎРїРёСЃРѕРє РћР±РЅРѕРІР»РµРЅРёР№:'), 30).x) / 2 )
+			imgui.FText(u8('РЎРїРёСЃРѕРє РћР±РЅРѕРІР»РµРЅРёР№:'), 30)
          imgui.BeginChild('news', imgui.ImVec2(-1, -1), false)
-            imgui.BeginChild('update', imgui.ImVec2(-1, 110), true)
+            imgui.BeginChild('##update2', imgui.ImVec2(-1, 63), true)
+            imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('РћР±РЅРѕРІР»РµРЅРёРµ #1.1'), 30).x) / 2 )
+			   imgui.FText(u8('РћР±РЅРѕРІР»РµРЅРёРµ #1.1'), 30)
+            imgui.FText(u8'- РђРІС‚РѕРѕР±РЅРѕРІР»РµРЅРёРµ', 18)
+            date_text = u8('РћС‚ ') .. '27.09.2023'
+				imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
+				imgui.FText('{TextDisabled}' .. date_text, 18)
+			   imgui.EndChild()
+            imgui.BeginChild('##update1', imgui.ImVec2(-1, 110), true)
             imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Release'), 30).x) / 2 )
 			   imgui.FText(u8('Release'), 30)
-            imgui.FText(u8'- Выход из игры/Выключение ПК при отключении от сервера', 18)
-            imgui.FText(u8'- Множество событий для оповещения в Telegram', 18)
-            imgui.FText(u8'{Text}- Команды {TextDisabled}/off{Text}, {TextDisabled}/q{Text}, {TextDisabled}/stats{Text}, {TextDisabled}/help {Text}для использования в Telegram', 18)
-            local date_text = u8('От ') .. '22.09.2023'
+            imgui.FText(u8'- Р’С‹С…РѕРґ РёР· РёРіСЂС‹/Р’С‹РєР»СЋС‡РµРЅРёРµ РџРљ РїСЂРё РѕС‚РєР»СЋС‡РµРЅРёРё РѕС‚ СЃРµСЂРІРµСЂР°', 18)
+            imgui.FText(u8'- РњРЅРѕР¶РµСЃС‚РІРѕ СЃРѕР±С‹С‚РёР№ РґР»СЏ РѕРїРѕРІРµС‰РµРЅРёСЏ РІ Telegram', 18)
+            imgui.FText(u8'{Text}- РљРѕРјР°РЅРґС‹ {TextDisabled}/off{Text}, {TextDisabled}/q{Text}, {TextDisabled}/stats{Text}, {TextDisabled}/help {Text}РґР»СЏ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ РІ Telegram', 18)
+            date_text = u8('РћС‚ ') .. '22.09.2023'
 				imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
 				imgui.FText('{TextDisabled}' .. date_text, 18)
 			   imgui.EndChild()
          imgui.EndChild()
       elseif tab == 4 then
          imgui.PushFont(fonts[30])
-				imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8('Автор скрипта: nist1')).x) / 2)
-				imgui.Text(u8('Автор скрипта:'))
+				imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8('РђРІС‚РѕСЂ СЃРєСЂРёРїС‚Р°: nist1')).x) / 2)
+				imgui.Text(u8('РђРІС‚РѕСЂ СЃРєСЂРёРїС‚Р°:'))
 				imgui.SameLine()
 				imgui.TextColoredRGB('{209ac9}nist1')
 			imgui.PopFont()
 			imgui.SameLine()
          imgui.SetCursorPos(imgui.ImVec2((imgui.GetWindowWidth() * 1.5 - 700) / 2, (imgui.GetWindowHeight() - 250) / 2))
 			imgui.BeginChild('Other', imgui.ImVec2(300, 195), true)
-				imgui.CenterText(u8('Небольшая информация:'))
-				if imgui.Button(u8('Blasthack аккаунт'), imgui.ImVec2(-1, 77.5)) then os.execute('explorer https://www.blast.hk/members/465668/') end
-				if imgui.Button(u8('Тема на BlastHack'), imgui.ImVec2(-1, 77.5))then os.execute('explorer https://www.blast.hk/threads/190315/') end
+				imgui.CenterText(u8('РќРµР±РѕР»СЊС€Р°СЏ РёРЅС„РѕСЂРјР°С†РёСЏ:'))
+				if imgui.Button(u8('Blasthack Р°РєРєР°СѓРЅС‚'), imgui.ImVec2(-1, 77.5)) then os.execute('explorer https://www.blast.hk/members/465668/') end
+				if imgui.Button(u8('РўРµРјР° РЅР° BlastHack'), imgui.ImVec2(-1, 77.5))then os.execute('explorer https://www.blast.hk/threads/190315/') end
             if imgui.IsItemHovered() then
                imgui.BeginTooltip()
-               imgui.Text(u8'Временно не доступно.')
+               imgui.Text(u8'Р’СЂРµРјРµРЅРЅРѕ РЅРµ РґРѕСЃС‚СѓРїРЅРѕ.')
                imgui.EndTooltip()
             end
 			imgui.EndChild()
 		   imgui.SetCursorPosY(imgui.GetWindowHeight() * 0.875)
-		   imgui.CenterText(u8('Нашли баг/недоработку, либо хотите предложить идею для скрипта?'))
-		   imgui.CenterText(u8('Свяжитесь с Автором с помощью Blasthack.'))
+		   imgui.CenterText(u8('РќР°С€Р»Рё Р±Р°Рі/РЅРµРґРѕСЂР°Р±РѕС‚РєСѓ, Р»РёР±Рѕ С…РѕС‚РёС‚Рµ РїСЂРµРґР»РѕР¶РёС‚СЊ РёРґРµСЋ РґР»СЏ СЃРєСЂРёРїС‚Р°?'))
+		   imgui.CenterText(u8('РЎРІСЏР¶РёС‚РµСЃСЊ СЃ РђРІС‚РѕСЂРѕРј СЃ РїРѕРјРѕС‰СЊСЋ Blasthack.'))
       elseif tab == 3 then
-         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Настройки скрипта:'), 30).x) / 2 )
-         imgui.FText(u8('Настройки скрипта:'), 30)
+         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('РќР°СЃС‚СЂРѕР№РєРё СЃРєСЂРёРїС‚Р°:'), 30).x) / 2 )
+         imgui.FText(u8('РќР°СЃС‚СЂРѕР№РєРё СЃРєСЂРёРїС‚Р°:'), 30)
          imgui.PushFont(fonts[18])
 			imgui.SetCursorPosX((imgui.GetWindowWidth() * 1.5 - 1150) / 2 - 5)
          imgui.BeginChild('settingsNotf', imgui.ImVec2(365, 419), false)
             imgui.StripChild()
             imgui.BeginChild('settingsNotfUnder', imgui.ImVec2(-1, -1), false)
-			      imgui.CenterText(u8('Настройки уведомлений:'))
-               if imgui.Checkbox(u8' Логирование входа/выхода из игры', join) then
+			      imgui.CenterText(u8('РќР°СЃС‚СЂРѕР№РєРё СѓРІРµРґРѕРјР»РµРЅРёР№:'))
+               if imgui.Checkbox(u8' Р›РѕРіРёСЂРѕРІР°РЅРёРµ РІС…РѕРґР°/РІС‹С…РѕРґР° РёР· РёРіСЂС‹', join) then
                   jsonConfig['notifications'].join = join[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'При входе/выходе в игру получите сообщение в Telegram.')
+                  imgui.Text(u8'РџСЂРё РІС…РѕРґРµ/РІС‹С…РѕРґРµ РІ РёРіСЂСѓ РїРѕР»СѓС‡РёС‚Рµ СЃРѕРѕР±С‰РµРЅРёРµ РІ Telegram.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Логирование урона по персонажу', damage) then
+               if imgui.Checkbox(u8' Р›РѕРіРёСЂРѕРІР°РЅРёРµ СѓСЂРѕРЅР° РїРѕ РїРµСЂСЃРѕРЅР°Р¶Сѓ', damage) then
                   jsonConfig['notifications'].damage = damage[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вы получите урон, то получите сообщение в Telegram.')
+                  imgui.Text(u8'Р•СЃР»Рё Р’С‹ РїРѕР»СѓС‡РёС‚Рµ СѓСЂРѕРЅ, С‚Рѕ РїРѕР»СѓС‡РёС‚Рµ СЃРѕРѕР±С‰РµРЅРёРµ РІ Telegram.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Логирование смерти персонажа', die) then
+               if imgui.Checkbox(u8' Р›РѕРіРёСЂРѕРІР°РЅРёРµ СЃРјРµСЂС‚Рё РїРµСЂСЃРѕРЅР°Р¶Р°', die) then
                   jsonConfig['notifications'].die = die[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вы умрёте, то получите сообщение в Telegram.')
+                  imgui.Text(u8'Р•СЃР»Рё Р’С‹ СѓРјСЂС‘С‚Рµ, С‚Рѕ РїРѕР»СѓС‡РёС‚Рµ СЃРѕРѕР±С‰РµРЅРёРµ РІ Telegram.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Логирование RP/NRP чата', logChat) then
+               if imgui.Checkbox(u8' Р›РѕРіРёСЂРѕРІР°РЅРёРµ RP/NRP С‡Р°С‚Р°', logChat) then
                   jsonConfig['notifications'].logChat = logChat[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Отправляет в Telegram сообщения из чата.')
+                  imgui.Text(u8'РћС‚РїСЂР°РІР»СЏРµС‚ РІ Telegram СЃРѕРѕР±С‰РµРЅРёСЏ РёР· С‡Р°С‚Р°.')
                   imgui.EndTooltip()
                end
             imgui.EndChild()
@@ -321,63 +335,63 @@ imgui.OnFrame(function() return WinState[0] end,
          imgui.BeginChild('settings', imgui.ImVec2(365, 419), false)
             imgui.StripChild()
             imgui.BeginChild('settingsUnder', imgui.ImVec2(-1, -1), false)
-               imgui.CenterText(u8('Настройки прочего:'))
-               if imgui.Checkbox(u8' Выход из игры при отключении от сервера', autoQ) then
+               imgui.CenterText(u8('РќР°СЃС‚СЂРѕР№РєРё РїСЂРѕС‡РµРіРѕ:'))
+               if imgui.Checkbox(u8' Р’С‹С…РѕРґ РёР· РёРіСЂС‹ РїСЂРё РѕС‚РєР»СЋС‡РµРЅРёРё РѕС‚ СЃРµСЂРІРµСЂР°', autoQ) then
                   if not jsonConfig['settings'].autoOff then
                      jsonConfig['settings'].autoQ = autoQ[0]
                      json('Config.json'):save(jsonConfig)
                   elseif jsonConfig['settings'].autoOff then
-                     msg('Используйте либо выход из игры, либо выключение ПК.')
+                     msg('РСЃРїРѕР»СЊР·СѓР№С‚Рµ Р»РёР±Рѕ РІС‹С…РѕРґ РёР· РёРіСЂС‹, Р»РёР±Рѕ РІС‹РєР»СЋС‡РµРЅРёРµ РџРљ.')
                      autoQ[0] = false
                   end
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вас кикнут/забанят, то ваша игра автоматически закроется.')
+                  imgui.Text(u8'Р•СЃР»Рё Р’Р°СЃ РєРёРєРЅСѓС‚/Р·Р°Р±Р°РЅСЏС‚, С‚Рѕ РІР°С€Р° РёРіСЂР° Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё Р·Р°РєСЂРѕРµС‚СЃСЏ.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Выключение ПК при отключении от сервера', autoOff) then
+               if imgui.Checkbox(u8' Р’С‹РєР»СЋС‡РµРЅРёРµ РџРљ РїСЂРё РѕС‚РєР»СЋС‡РµРЅРёРё РѕС‚ СЃРµСЂРІРµСЂР°', autoOff) then
                   if not jsonConfig['settings'].autoQ then
                      jsonConfig['settings'].autoOff = autoOff[0]
                      json('Config.json'):save(jsonConfig)
                   elseif jsonConfig['settings'].autoQ then
-                     msg('Используйте либо выход из игры, либо выключение ПК.')
+                     msg('РСЃРїРѕР»СЊР·СѓР№С‚Рµ Р»РёР±Рѕ РІС‹С…РѕРґ РёР· РёРіСЂС‹, Р»РёР±Рѕ РІС‹РєР»СЋС‡РµРЅРёРµ РџРљ.')
                      autoOff[0] = false
                   end
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вас кикнут/забанят, то ваш ПК автоматически выключится.')
+                  imgui.Text(u8'Р•СЃР»Рё Р’Р°СЃ РєРёРєРЅСѓС‚/Р·Р°Р±Р°РЅСЏС‚, С‚Рѕ РІР°С€ РџРљ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РІС‹РєР»СЋС‡РёС‚СЃСЏ.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Получать статистику по команде в Telegram', statsCmd) then
+               if imgui.Checkbox(u8' РџРѕР»СѓС‡Р°С‚СЊ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РїРѕ РєРѕРјР°РЅРґРµ РІ Telegram', statsCmd) then
                   jsonConfig['settings'].statsCmd = statsCmd[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Отправляет вашу статистику.')
-                  imgui.Text(u8'Команда в Telegram: /stats')
+                  imgui.Text(u8'РћС‚РїСЂР°РІР»СЏРµС‚ РІР°С€Сѓ СЃС‚Р°С‚РёСЃС‚РёРєСѓ.')
+                  imgui.Text(u8'РљРѕРјР°РЅРґР° РІ Telegram: /stats')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Закрывать игру по команде в Telegram', qCmd) then
+               if imgui.Checkbox(u8' Р—Р°РєСЂС‹РІР°С‚СЊ РёРіСЂСѓ РїРѕ РєРѕРјР°РЅРґРµ РІ Telegram', qCmd) then
                   jsonConfig['settings'].qCmd = qCmd[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Выходит из игры.')
-                  imgui.Text(u8'Команда в Telegram: /q')
+                  imgui.Text(u8'Р’С‹С…РѕРґРёС‚ РёР· РёРіСЂС‹.')
+                  imgui.Text(u8'РљРѕРјР°РЅРґР° РІ Telegram: /q')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Выключать ПК по команде в Telegram', offCmd) then
+               if imgui.Checkbox(u8' Р’С‹РєР»СЋС‡Р°С‚СЊ РџРљ РїРѕ РєРѕРјР°РЅРґРµ РІ Telegram', offCmd) then
                   jsonConfig['settings'].offCmd = offCmd[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Выключает ПК.')
-                  imgui.Text(u8'Команда в Telegram: /off')
+                  imgui.Text(u8'Р’С‹РєР»СЋС‡Р°РµС‚ РџРљ.')
+                  imgui.Text(u8'РљРѕРјР°РЅРґР° РІ Telegram: /off')
                   imgui.EndTooltip()
                end
             imgui.EndChild()
@@ -529,7 +543,7 @@ function checkUpdates()
       if status == dlstatus.STATUS_ENDDOWNLOADDATA then
          updateIni = inicfg.load(nil, update_path)
          if tonumber(updateIni.main.version) > tonumber(thisScript().version) then
-            msg('Найдено обновление!') 
+            msg('Р’РЅРёРјР°РЅРёРµ! Р‘С‹Р»Рѕ РЅР°Р№РґРµРЅРѕ РѕР±РЅРѕРІР»РµРЅРёРµ, РѕР±РЅРѕРІР»СЏСЋСЃСЊ..') 
             update_state = true
          end
          os.remove(update_path)
@@ -539,18 +553,18 @@ end
 
 function samp.onSetPlayerHealth(health)
 	if health ~= lastHealth and jsonConfig['notifications'].damage and sampGetGamestate() == 3 then
-		sendTelegramNotification('Ваше здоровье изменено!\nТекущее ХП: ' .. health)
+		sendTelegramNotification('Р’Р°С€Рµ Р·РґРѕСЂРѕРІСЊРµ РёР·РјРµРЅРµРЅРѕ!\nРўРµРєСѓС‰РµРµ РҐРџ: ' .. health)
 	end
 	lastHealth = health
 end
 
 function samp.onServerMessage(color, text)
-   if text:find('^%s*%(%( Через 30 секунд вы сможете сразу отправиться в больницу или подождать врачей %)%)%s*$') then
+   if text:find('^%s*%(%( Р§РµСЂРµР· 30 СЃРµРєСѓРЅРґ РІС‹ СЃРјРѕР¶РµС‚Рµ СЃСЂР°Р·Сѓ РѕС‚РїСЂР°РІРёС‚СЊСЃСЏ РІ Р±РѕР»СЊРЅРёС†Сѓ РёР»Рё РїРѕРґРѕР¶РґР°С‚СЊ РІСЂР°С‡РµР№ %)%)%s*$') then
       if jsonConfig['notifications'].die then
-         sendTelegramNotification('Ваш персонаж умер!')
+         sendTelegramNotification('Р’Р°С€ РїРµСЂСЃРѕРЅР°Р¶ СѓРјРµСЂ!')
       end
    end
-   if text:find(".*%[%d+%] говорит:") then 
+   if text:find(".*%[%d+%] РіРѕРІРѕСЂРёС‚:") then 
       if jsonConfig['notifications'].logChat then
          sendTelegramNotification(text)
       end
@@ -566,34 +580,34 @@ end
 
 function onReceivePacket(id)
 	local notificationsJoinLeave = {
-		[34] = {'Вы подключились к серверу!', 'ID_CONNECTION_REQUEST_ACCEPTED', jsonConfig['notifications'].join},
-		[35] = {'Попытка подключения не удалась!', 'ID_CONNECTION_ATTEMPT_FAILED', jsonConfig['notifications'].join},
-		[37] = {'Неправильный пароль от сервера!', 'ID_INVALID_PASSWORD', jsonConfig['notifications'].join}
+		[34] = {'Р’С‹ РїРѕРґРєР»СЋС‡РёР»РёСЃСЊ Рє СЃРµСЂРІРµСЂСѓ!', 'ID_CONNECTION_REQUEST_ACCEPTED', jsonConfig['notifications'].join},
+		[35] = {'РџРѕРїС‹С‚РєР° РїРѕРґРєР»СЋС‡РµРЅРёСЏ РЅРµ СѓРґР°Р»Р°СЃСЊ!', 'ID_CONNECTION_ATTEMPT_FAILED', jsonConfig['notifications'].join},
+		[37] = {'РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ РїР°СЂРѕР»СЊ РѕС‚ СЃРµСЂРІРµСЂР°!', 'ID_INVALID_PASSWORD', jsonConfig['notifications'].join}
 	}
 	if notificationsJoinLeave[id] and notificationsJoinLeave[id][3] then
 		sendTelegramNotification(notificationsJoinLeave[id][1])
 	end
    local notificationsJoinLeaveIfAuto = {
-		[32] = {'Сервер закрыл соединение!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['notifications'].join},
-		[33] = {'Соединение потеряно!', 'ID_CONNECTION_LOST', jsonConfig['notifications'].join},
+		[32] = {'РЎРµСЂРІРµСЂ Р·Р°РєСЂС‹Р» СЃРѕРµРґРёРЅРµРЅРёРµ!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['notifications'].join},
+		[33] = {'РЎРѕРµРґРёРЅРµРЅРёРµ РїРѕС‚РµСЂСЏРЅРѕ!', 'ID_CONNECTION_LOST', jsonConfig['notifications'].join},
 	}
 	if notificationsJoinLeaveIfAuto[id] and notificationsJoinLeaveIfAuto[id][3] and not jsonConfig['settings'].autoQ and not jsonConfig['settings'].autoOff then
 		sendTelegramNotification(notificationsJoinLeaveIfAuto[id][1])
 	end
    local LocalAutoQ = {
-		[32] = {'Сервер закрыл соединение!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoQ},
-		[33] = {'Соединение потеряно!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoQ},
+		[32] = {'РЎРµСЂРІРµСЂ Р·Р°РєСЂС‹Р» СЃРѕРµРґРёРЅРµРЅРёРµ!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoQ},
+		[33] = {'РЎРѕРµРґРёРЅРµРЅРёРµ РїРѕС‚РµСЂСЏРЅРѕ!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoQ},
 	}
 	if LocalAutoQ[id] and LocalAutoQ[id][3] then
-		sendTelegramNotification(list_packet[id][1]..'\nВаша игра выключена.')
+		sendTelegramNotification(list_packet[id][1]..'\nР’Р°С€Р° РёРіСЂР° РІС‹РєР»СЋС‡РµРЅР°.')
       ffi.C.ExitProcess(0)
 	end
    local LocalAutoOff = {
-		[32] = {'Сервер закрыл соединение!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoOff},
-		[33] = {'Соединение потеряно!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoOff},
+		[32] = {'РЎРµСЂРІРµСЂ Р·Р°РєСЂС‹Р» СЃРѕРµРґРёРЅРµРЅРёРµ!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoOff},
+		[33] = {'РЎРѕРµРґРёРЅРµРЅРёРµ РїРѕС‚РµСЂСЏРЅРѕ!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoOff},
 	}
 	if LocalAutoOff[id] and LocalAutoOff[id][3] then
-		sendTelegramNotification(LocalAutoOff[id][1]..'\nВаш компьютер выключен.')
+		sendTelegramNotification(LocalAutoOff[id][1]..'\nР’Р°С€ РєРѕРјРїСЊСЋС‚РµСЂ РІС‹РєР»СЋС‡РµРЅ.')
       os.execute('shutdown /s /t 5')
 	end
 end
@@ -643,27 +657,27 @@ function encodeUrl(str)
    return u8:encode(str, 'CP1251')
 end
 
-function sendTelegramNotification(msg) -- функция для отправки сообщения юзеру
-   msg = msg:gsub('{......}', '') --тут типо убираем цвет
-   msg = encodeUrl(msg) -- ну тут мы закодируем строку
-   async_http_request('https://api.telegram.org/bot' .. jsonConfig['notifications'].inputToken .. '/sendMessage?chat_id=' .. jsonConfig['notifications'].inputUser .. '&text='..msg,'', function(result) end) -- а тут уже отправка
+function sendTelegramNotification(msg) -- С„СѓРЅРєС†РёСЏ РґР»СЏ РѕС‚РїСЂР°РІРєРё СЃРѕРѕР±С‰РµРЅРёСЏ СЋР·РµСЂСѓ
+   msg = msg:gsub('{......}', '') --С‚СѓС‚ С‚РёРїРѕ СѓР±РёСЂР°РµРј С†РІРµС‚
+   msg = encodeUrl(msg) -- РЅСѓ С‚СѓС‚ РјС‹ Р·Р°РєРѕРґРёСЂСѓРµРј СЃС‚СЂРѕРєСѓ
+   async_http_request('https://api.telegram.org/bot' .. jsonConfig['notifications'].inputToken .. '/sendMessage?chat_id=' .. jsonConfig['notifications'].inputUser .. '&text='..msg,'', function(result) end) -- Р° С‚СѓС‚ СѓР¶Рµ РѕС‚РїСЂР°РІРєР°
 end
 
-function get_telegram_updates() -- функция получения сообщений от юзера
-   while not updateid do wait(1) end -- ждем пока не узнаем последний ID
+function get_telegram_updates() -- С„СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ СЃРѕРѕР±С‰РµРЅРёР№ РѕС‚ СЋР·РµСЂР°
+   while not updateid do wait(1) end -- Р¶РґРµРј РїРѕРєР° РЅРµ СѓР·РЅР°РµРј РїРѕСЃР»РµРґРЅРёР№ ID
    local runner = requestRunner()
    local reject = function() end
    local args = ''
    while true do
-      url = 'https://api.telegram.org/bot'..jsonConfig['notifications'].inputToken..'/getUpdates?chat_id='..jsonConfig['notifications'].inputUser..'&offset=-1' -- создаем ссылку
+      url = 'https://api.telegram.org/bot'..jsonConfig['notifications'].inputToken..'/getUpdates?chat_id='..jsonConfig['notifications'].inputUser..'&offset=-1' -- СЃРѕР·РґР°РµРј СЃСЃС‹Р»РєСѓ
       threadHandle(runner, url, args, processing_telegram_messages, reject)
       wait(0)
    end
 end
 
-function processing_telegram_messages(result) -- функция проверОчки того что отправил чел
+function processing_telegram_messages(result) -- С„СѓРЅРєС†РёСЏ РїСЂРѕРІРµСЂРћС‡РєРё С‚РѕРіРѕ С‡С‚Рѕ РѕС‚РїСЂР°РІРёР» С‡РµР»
    if result then
-      -- тута мы проверяем все ли верно
+      -- С‚СѓС‚Р° РјС‹ РїСЂРѕРІРµСЂСЏРµРј РІСЃРµ Р»Рё РІРµСЂРЅРѕ
       local proc_table = decodeJson(result)
       if proc_table.ok then
          if #proc_table.result > 0 then
@@ -673,34 +687,34 @@ function processing_telegram_messages(result) -- функция проверОчки того что отп
                   updateid = res_table.update_id
                   local message_from_user = res_table.message.text
                   if message_from_user then
-                     -- и тут если чел отправил текст мы сверяем
-                     local textTg = u8:decode(message_from_user) .. ' ' --добавляем в конец пробел дабы не произошли тех. шоколадки с командами(типо чтоб !q не считалось как !qq)
+                     -- Рё С‚СѓС‚ РµСЃР»Рё С‡РµР» РѕС‚РїСЂР°РІРёР» С‚РµРєСЃС‚ РјС‹ СЃРІРµСЂСЏРµРј
+                     local textTg = u8:decode(message_from_user) .. ' ' --РґРѕР±Р°РІР»СЏРµРј РІ РєРѕРЅРµС† РїСЂРѕР±РµР» РґР°Р±С‹ РЅРµ РїСЂРѕРёР·РѕС€Р»Рё С‚РµС…. С€РѕРєРѕР»Р°РґРєРё СЃ РєРѕРјР°РЅРґР°РјРё(С‚РёРїРѕ С‡С‚РѕР± !q РЅРµ СЃС‡РёС‚Р°Р»РѕСЃСЊ РєР°Рє !qq)
                      if textTg:match('^/q') then
                         if jsonConfig['settings'].qCmd then
-                           sendTelegramNotification('Игра успешно закрыта.')
+                           sendTelegramNotification('РРіСЂР° СѓСЃРїРµС€РЅРѕ Р·Р°РєСЂС‹С‚Р°.')
                            ffi.C.ExitProcess(0)
                         elseif not jsonConfig['settings'].qCmd then
-                           sendTelegramNotification('Данная функция отключена!\nВключить можно в настройках скрипта.')
+                           sendTelegramNotification('Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РѕС‚РєР»СЋС‡РµРЅР°!\nР’РєР»СЋС‡РёС‚СЊ РјРѕР¶РЅРѕ РІ РЅР°СЃС‚СЂРѕР№РєР°С… СЃРєСЂРёРїС‚Р°.')
                         end
                      elseif textTg:match('^/off') then
                         if jsonConfig['settings'].offCmd then
-                           sendTelegramNotification('Ваш ПК выключится через 5 секунд.')
+                           sendTelegramNotification('Р’Р°С€ РџРљ РІС‹РєР»СЋС‡РёС‚СЃСЏ С‡РµСЂРµР· 5 СЃРµРєСѓРЅРґ.')
                            os.execute('shutdown /s /t 5')
                         elseif not jsonConfig['settings'].offCmd then
-                           sendTelegramNotification('Данная функция отключена!\nВключить можно в настройках скрипта.')
+                           sendTelegramNotification('Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РѕС‚РєР»СЋС‡РµРЅР°!\nР’РєР»СЋС‡РёС‚СЊ РјРѕР¶РЅРѕ РІ РЅР°СЃС‚СЂРѕР№РєР°С… СЃРєСЂРёРїС‚Р°.')
                         end
                      elseif textTg:match('^/stats') then
                         if jsonConfig['settings'].statsCmd then
-                           sendTelegramNotification('Вот ваша статистика:')
+                           sendTelegramNotification('Р’РѕС‚ РІР°С€Р° СЃС‚Р°С‚РёСЃС‚РёРєР°:')
                            stats = true
                            sampSendChat('/stats')
                         elseif not jsonConfig['settings'].statsCmd then
-                           sendTelegramNotification('Данная функция отключена!\nВключить можно в настройках скрипта.')
+                           sendTelegramNotification('Р”Р°РЅРЅР°СЏ С„СѓРЅРєС†РёСЏ РѕС‚РєР»СЋС‡РµРЅР°!\nР’РєР»СЋС‡РёС‚СЊ РјРѕР¶РЅРѕ РІ РЅР°СЃС‚СЂРѕР№РєР°С… СЃРєСЂРёРїС‚Р°.')
                         end
                      elseif textTg:match('^/help') then
-                        sendTelegramNotification('Список доступных команд:\n\n/off - Выключает Ваш компьютер.\n/q - Выходит из игры.\n/stats - Отправляет Вашу статистику из игры.')
-                     else -- если же не найдется ни одна из команд выше, выведем сообщение
-                        sendTelegramNotification('Такой команды не существует!\nСписок команд в /help')
+                        sendTelegramNotification('РЎРїРёСЃРѕРє РґРѕСЃС‚СѓРїРЅС‹С… РєРѕРјР°РЅРґ:\n\n/off - Р’С‹РєР»СЋС‡Р°РµС‚ Р’Р°С€ РєРѕРјРїСЊСЋС‚РµСЂ.\n/q - Р’С‹С…РѕРґРёС‚ РёР· РёРіСЂС‹.\n/stats - РћС‚РїСЂР°РІР»СЏРµС‚ Р’Р°С€Сѓ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РёР· РёРіСЂС‹.')
+                     else -- РµСЃР»Рё Р¶Рµ РЅРµ РЅР°Р№РґРµС‚СЃСЏ РЅРё РѕРґРЅР° РёР· РєРѕРјР°РЅРґ РІС‹С€Рµ, РІС‹РІРµРґРµРј СЃРѕРѕР±С‰РµРЅРёРµ
+                        sendTelegramNotification('РўР°РєРѕР№ РєРѕРјР°РЅРґС‹ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚!\nРЎРїРёСЃРѕРє РєРѕРјР°РЅРґ РІ /help')
                      end
                   end
                end
