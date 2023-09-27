@@ -243,7 +243,7 @@ imgui.OnFrame(function() return WinState[0] end,
             imgui.BeginChild('##update2', imgui.ImVec2(-1, 63), true)
             imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Обновление #1.1'), 30).x) / 2 )
 			   imgui.FText(u8('Обновление #1.1'), 30)
-            imgui.FText(u8'- Автообновление', 18)
+            imgui.FText(u8'- Автообновление скрипта', 18)
             date_text = u8('От ') .. '27.09.2023'
 				imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
 				imgui.FText('{TextDisabled}' .. date_text, 18)
@@ -542,7 +542,7 @@ function checkUpdates()
    downloadUrlToFile(update_url, update_path, function(id, status)
       if status == dlstatus.STATUS_ENDDOWNLOADDATA then
          updateIni = inicfg.load(nil, update_path)
-         if tonumber(updateIni.main.version) > tonumber(thisScript().version) then
+         if tonumber(updateIni.main.version) ~= tonumber(thisScript().version) then
             msg('Внимание! Было найдено обновление, обновляюсь..') 
             update_state = true
          end
