@@ -27,9 +27,9 @@ if not imgui_check or not samp_check or not effil_check or not requests_check th
 		}
 		local libs_no_found = {}
 		for k, v in pairs(libs) do
-			if not v then sampAddChatMessage('[Telegram Control]{FFFFFF} У Вас отсутствует библиотека {308ad9}' .. k .. '{FFFFFF}. Без неё скрипт {308ad9}не будет {FFFFFF}работать!', 0x308ad9); table.insert(libs_no_found, k) end
+			if not v then sampAddChatMessage('[Telegram Control]{FFFFFF} Г“ Г‚Г Г± Г®ГІГ±ГіГІГ±ГІГўГіГҐГІ ГЎГЁГЎГ«ГЁГ®ГІГҐГЄГ  {308ad9}' .. k .. '{FFFFFF}. ГЃГҐГ§ Г­ГҐВё Г±ГЄГ°ГЁГЇГІ {308ad9}Г­ГҐ ГЎГіГ¤ГҐГІ {FFFFFF}Г°Г ГЎГ®ГІГ ГІГј!', 0x308ad9); table.insert(libs_no_found, k) end
 		end
-		sampShowDialog(18364, '{308ad9}Telegram Control', string.format('{FFFFFF}В Вашей сборке {308ad9}нету необходимых библиотек{FFFFFF} для работы скрипта.\nБез них он {308ad9}не будет{FFFFFF} работать!\n\nБиблиотеки, которые Вам нужны:\n{FFFFFF}- {308ad9}%s\n\n{FFFFFF}Все библиотеки можно скачать на BlastHack: {308ad9}https://www.blast.hk\n{FFFFFF}Там же Вы {308ad9}найдете инструкцию {FFFFFF}для их установки.', table.concat(libs_no_found, '\n{FFFFFF}- {7172ee}')), 'Принять', '', 0)
+		sampShowDialog(18364, '{308ad9}Telegram Control', string.format('{FFFFFF}Г‚ Г‚Г ГёГҐГ© Г±ГЎГ®Г°ГЄГҐ {308ad9}Г­ГҐГІГі Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г»Гµ ГЎГЁГЎГ«ГЁГ®ГІГҐГЄ{FFFFFF} Г¤Г«Гї Г°Г ГЎГ®ГІГ» Г±ГЄГ°ГЁГЇГІГ .\nГЃГҐГ§ Г­ГЁГµ Г®Г­ {308ad9}Г­ГҐ ГЎГіГ¤ГҐГІ{FFFFFF} Г°Г ГЎГ®ГІГ ГІГј!\n\nГЃГЁГЎГ«ГЁГ®ГІГҐГЄГЁ, ГЄГ®ГІГ®Г°Г»ГҐ Г‚Г Г¬ Г­ГіГ¦Г­Г»:\n{FFFFFF}- {308ad9}%s\n\n{FFFFFF}Г‚Г±ГҐ ГЎГЁГЎГ«ГЁГ®ГІГҐГЄГЁ Г¬Г®Г¦Г­Г® Г±ГЄГ Г·Г ГІГј Г­Г  BlastHack: {308ad9}https://www.blast.hk\n{FFFFFF}Г’Г Г¬ Г¦ГҐ Г‚Г» {308ad9}Г­Г Г©Г¤ГҐГІГҐ ГЁГ­Г±ГІГ°ГіГЄГ¶ГЁГѕ {FFFFFF}Г¤Г«Гї ГЁГµ ГіГ±ГІГ Г­Г®ГўГЄГЁ.', table.concat(libs_no_found, '\n{FFFFFF}- {7172ee}')), 'ГЏГ°ГЁГ­ГїГІГј', '', 0)
 		thisScript():unload()
 	end
 	return
@@ -76,7 +76,7 @@ function json(path)
 			file:write(encodeJson(array))
 			file:close()
 		else
-			msg('Ошибка при сохранении файла конфига!')
+			msg('ГЋГёГЁГЎГЄГ  ГЇГ°ГЁ Г±Г®ГµГ°Г Г­ГҐГ­ГЁГЁ ГґГ Г©Г«Г  ГЄГ®Г­ГґГЁГЈГ !')
 		end
 	end
 
@@ -121,7 +121,7 @@ local jsonConfig = json('Config.json'):load({
 -->> Autoupdate Settings
 local update_url = 'https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/update.ini'
 local update_path = getWorkingDirectory()..'\\Telegram Control\\update.ini'
-local script_utl = 'https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/Telegram%20Control.lua'
+local script_url = 'https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/Telegram%20Control.lua'
 local script_path = thisScript().path
 local update_state = false
 
@@ -144,14 +144,14 @@ function main()
    getLastUpdate()
    lua_thread.create(get_telegram_updates)
    while not sampIsLocalPlayerSpawned() do wait(0) end
-	msg('Загружен! Активация: {308ad9}/tgc')
+	msg('Г‡Г ГЈГ°ГіГ¦ГҐГ­! ГЂГЄГІГЁГўГ Г¶ГЁГї: {308ad9}/tgc')
 	sampRegisterChatCommand('tgc', function() WinState[0] = not WinState[0] end)
    checkUpdates()
 	while true do wait(1000)
       if update_state then
          downloadUrlToFile(script_url, script_path, function(id, status)
             if status == dlstatus.STATUS_ENDDOWNLOADDATA then
-               msg('Обновление успешно установлено!')
+               msg('ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ ГіГ±ГЇГҐГёГ­Г® ГіГ±ГІГ Г­Г®ГўГ«ГҐГ­Г®!')
                thisScript():reload()
             end
          end)
@@ -189,16 +189,16 @@ imgui.OnFrame(function() return WinState[0] end,
          imgui.SetCursorPosY(30 / 2)
          imgui.Image(logo, imgui.ImVec2(200, 130))
          imgui.SetCursorPosY(160)
-         if imgui.Button(u8'Уведомления', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'Г“ГўГҐГ¤Г®Г¬Г«ГҐГ­ГЁГї', imgui.ImVec2(200,40)) then
             tab = 1
          end
-         if imgui.Button(u8'Обновления', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГї', imgui.ImVec2(200,40)) then
             tab = 2
          end
-         if imgui.Button(u8'Настройки', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'ГЌГ Г±ГІГ°Г®Г©ГЄГЁ', imgui.ImVec2(200,40)) then
             tab = 3
          end
-         if imgui.Button(u8'Автор', imgui.ImVec2(200,40)) then
+         if imgui.Button(u8'ГЂГўГІГ®Г°', imgui.ImVec2(200,40)) then
             tab = 4
          end
       imgui.EndGroup()
@@ -208,122 +208,122 @@ imgui.OnFrame(function() return WinState[0] end,
       imgui.BeginChild('##right', imgui.ImVec2(-1, -1), true, imgui.WindowFlags.NoScrollbar)
       if tab == 1 then
          imgui.PushFont(fonts[15])
-			imgui.Text(u8('1 Шаг: Открываем Telegram и заходим в бота «@BotFather»')); imgui.SameLine(); imgui.Link('(https://t.me/BotFather)', 'https://t.me/BotFather')
-			imgui.Text(u8('2 Шаг: Вводим команду «/newbot» и следуем инструкциям'))
-			imgui.Text(u8('3 Шаг: После успешного создания бота Вы получите токен')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('· Пример сообщения с токеном:')); imgui.SameLine(); imgui.TextDisabled('Use this token to access the HTTP API: 6123464634:AAHgee28hWg5yCFICHfeew231pmKhh19c')
-			imgui.Text(u8('4 Шаг: Вам нужно узнать ID своего юзера. Для этого я использовал бота «@getmyid_bot»')); imgui.SameLine(); imgui.Link('(https://t.me/getmyid_bot)', 'https://t.me/getmyid_bot')
-			imgui.Text(u8('5 Шаг: Пишем боту «@getmyid_bot» в личку и Вам отправится ID Вашего юзера в поле «Your user ID»')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('· Пример сообщения с ID юзера:')); imgui.SameLine(); imgui.TextDisabled('Your user ID: 1950130')
-			imgui.Text(u8('6 Шаг: Теперь нам нужно ввести токен и ID юзера в поля ниже. После нажмите на кнопку «Тестовое сообщение» в скрипте')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('· Если Вам в личку отправится сообщение, то Вы всё сделали правильно'))
+			imgui.Text(u8('1 ГГ ГЈ: ГЋГІГЄГ°Г»ГўГ ГҐГ¬ Telegram ГЁ Г§Г ГµГ®Г¤ГЁГ¬ Гў ГЎГ®ГІГ  В«@BotFatherВ»')); imgui.SameLine(); imgui.Link('(https://t.me/BotFather)', 'https://t.me/BotFather')
+			imgui.Text(u8('2 ГГ ГЈ: Г‚ГўГ®Г¤ГЁГ¬ ГЄГ®Г¬Г Г­Г¤Гі В«/newbotВ» ГЁ Г±Г«ГҐГ¤ГіГҐГ¬ ГЁГ­Г±ГІГ°ГіГЄГ¶ГЁГїГ¬'))
+			imgui.Text(u8('3 ГГ ГЈ: ГЏГ®Г±Г«ГҐ ГіГ±ГЇГҐГёГ­Г®ГЈГ® Г±Г®Г§Г¤Г Г­ГЁГї ГЎГ®ГІГ  Г‚Г» ГЇГ®Г«ГіГ·ГЁГІГҐ ГІГ®ГЄГҐГ­')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('В· ГЏГ°ГЁГ¬ГҐГ° Г±Г®Г®ГЎГ№ГҐГ­ГЁГї Г± ГІГ®ГЄГҐГ­Г®Г¬:')); imgui.SameLine(); imgui.TextDisabled('Use this token to access the HTTP API: 6123464634:AAHgee28hWg5yCFICHfeew231pmKhh19c')
+			imgui.Text(u8('4 ГГ ГЈ: Г‚Г Г¬ Г­ГіГ¦Г­Г® ГіГ§Г­Г ГІГј ID Г±ГўГ®ГҐГЈГ® ГѕГ§ГҐГ°Г . Г„Г«Гї ГЅГІГ®ГЈГ® Гї ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г« ГЎГ®ГІГ  В«@getmyid_botВ»')); imgui.SameLine(); imgui.Link('(https://t.me/getmyid_bot)', 'https://t.me/getmyid_bot')
+			imgui.Text(u8('5 ГГ ГЈ: ГЏГЁГёГҐГ¬ ГЎГ®ГІГі В«@getmyid_botВ» Гў Г«ГЁГ·ГЄГі ГЁ Г‚Г Г¬ Г®ГІГЇГ°Г ГўГЁГІГ±Гї ID Г‚Г ГёГҐГЈГ® ГѕГ§ГҐГ°Г  Гў ГЇГ®Г«ГҐ В«Your user IDВ»')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('В· ГЏГ°ГЁГ¬ГҐГ° Г±Г®Г®ГЎГ№ГҐГ­ГЁГї Г± ID ГѕГ§ГҐГ°Г :')); imgui.SameLine(); imgui.TextDisabled('Your user ID: 1950130')
+			imgui.Text(u8('6 ГГ ГЈ: Г’ГҐГЇГҐГ°Гј Г­Г Г¬ Г­ГіГ¦Г­Г® ГўГўГҐГ±ГІГЁ ГІГ®ГЄГҐГ­ ГЁ ID ГѕГ§ГҐГ°Г  Гў ГЇГ®Г«Гї Г­ГЁГ¦ГҐ. ГЏГ®Г±Г«ГҐ Г­Г Г¦Г¬ГЁГІГҐ Г­Г  ГЄГ­Г®ГЇГЄГі В«Г’ГҐГ±ГІГ®ГўГ®ГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐВ» Гў Г±ГЄГ°ГЁГЇГІГҐ')); imgui.NewLine(); imgui.SameLine(20); imgui.Text(u8('В· Г…Г±Г«ГЁ Г‚Г Г¬ Гў Г«ГЁГ·ГЄГі Г®ГІГЇГ°Г ГўГЁГІГ±Гї Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ, ГІГ® Г‚Г» ГўГ±Вё Г±Г¤ГҐГ«Г Г«ГЁ ГЇГ°Г ГўГЁГ«ГјГ­Г®'))
 			imgui.PopFont()
 
 			imgui.NewLine()
 
 			imgui.SetCursorPosY(255)
-			imgui.CenterText(u8(' Данные для бота:'))
+			imgui.CenterText(u8(' Г„Г Г­Г­Г»ГҐ Г¤Г«Гї ГЎГ®ГІГ :'))
          imgui.SetCursorPosX((imgui.GetWindowWidth() - 300) / 2)
 			imgui.BeginGroup()
 				imgui.PushItemWidth(300)
-					if imgui.InputTextWithHint('##inputToken', u8('Введите токен'), inputToken, ffi.sizeof(inputToken), imgui.InputTextFlags.Password) then
+					if imgui.InputTextWithHint('##inputToken', u8('Г‚ГўГҐГ¤ГЁГІГҐ ГІГ®ГЄГҐГ­'), inputToken, ffi.sizeof(inputToken), imgui.InputTextFlags.Password) then
 						jsonConfig['notifications'].inputToken = ffi.string(inputToken)
 						json('Config.json'):save(jsonConfig)
 					end
-					if imgui.InputTextWithHint('##inputUser', u8('Введите ID юзера'), inputUser, ffi.sizeof(inputUser), imgui.InputTextFlags.Password) then
+					if imgui.InputTextWithHint('##inputUser', u8('Г‚ГўГҐГ¤ГЁГІГҐ ID ГѕГ§ГҐГ°Г '), inputUser, ffi.sizeof(inputUser), imgui.InputTextFlags.Password) then
 						jsonConfig['notifications'].inputUser = ffi.string(inputUser)
 						json('Config.json'):save(jsonConfig)
 					end
 				imgui.PopItemWidth()
-				if imgui.Button(u8('Тестовое сообщение'), imgui.ImVec2(300)) then
-					sendTelegramNotification('Тестовое сообщение!')
+				if imgui.Button(u8('Г’ГҐГ±ГІГ®ГўГ®ГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ'), imgui.ImVec2(300)) then
+					sendTelegramNotification('Г’ГҐГ±ГІГ®ГўГ®ГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ!')
 				end
 			imgui.EndGroup()
       elseif tab == 2 then
-         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Список Обновлений:'), 30).x) / 2 )
-			imgui.FText(u8('Список Обновлений:'), 30)
+         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Г‘ГЇГЁГ±Г®ГЄ ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГ©:'), 30).x) / 2 )
+			imgui.FText(u8('Г‘ГЇГЁГ±Г®ГЄ ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГ©:'), 30)
          imgui.BeginChild('news', imgui.ImVec2(-1, -1), false)
             imgui.BeginChild('##update2', imgui.ImVec2(-1, 63), true)
-            imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Обновление #1.1'), 30).x) / 2 )
-			   imgui.FText(u8('Обновление #1.1'), 30)
-            imgui.FText(u8'- Автообновление скрипта', 18)
-            date_text = u8('От ') .. '27.09.2023'
+            imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ #1.1'), 30).x) / 2 )
+			   imgui.FText(u8('ГЋГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ #1.1'), 30)
+            imgui.FText(u8'- ГЂГўГІГ®Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ Г±ГЄГ°ГЁГЇГІГ ', 18)
+            date_text = u8('ГЋГІ ') .. '27.09.2023'
 				imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
 				imgui.FText('{TextDisabled}' .. date_text, 18)
 			   imgui.EndChild()
             imgui.BeginChild('##update1', imgui.ImVec2(-1, 110), true)
             imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Release'), 30).x) / 2 )
 			   imgui.FText(u8('Release'), 30)
-            imgui.FText(u8'- Выход из игры/Выключение ПК при отключении от сервера', 18)
-            imgui.FText(u8'- Множество событий для оповещения в Telegram', 18)
-            imgui.FText(u8'{Text}- Команды {TextDisabled}/off{Text}, {TextDisabled}/q{Text}, {TextDisabled}/stats{Text}, {TextDisabled}/help {Text}для использования в Telegram', 18)
-            date_text = u8('От ') .. '22.09.2023'
+            imgui.FText(u8'- Г‚Г»ГµГ®Г¤ ГЁГ§ ГЁГЈГ°Г»/Г‚Г»ГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЏГЉ ГЇГ°ГЁ Г®ГІГЄГ«ГѕГ·ГҐГ­ГЁГЁ Г®ГІ Г±ГҐГ°ГўГҐГ°Г ', 18)
+            imgui.FText(u8'- ГЊГ­Г®Г¦ГҐГ±ГІГўГ® Г±Г®ГЎГ»ГІГЁГ© Г¤Г«Гї Г®ГЇГ®ГўГҐГ№ГҐГ­ГЁГї Гў Telegram', 18)
+            imgui.FText(u8'{Text}- ГЉГ®Г¬Г Г­Г¤Г» {TextDisabled}/off{Text}, {TextDisabled}/q{Text}, {TextDisabled}/stats{Text}, {TextDisabled}/help {Text}Г¤Г«Гї ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ Г­ГЁГї Гў Telegram', 18)
+            date_text = u8('ГЋГІ ') .. '22.09.2023'
 				imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
 				imgui.FText('{TextDisabled}' .. date_text, 18)
 			   imgui.EndChild()
          imgui.EndChild()
       elseif tab == 4 then
          imgui.PushFont(fonts[30])
-				imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8('Автор скрипта: nist1')).x) / 2)
-				imgui.Text(u8('Автор скрипта:'))
+				imgui.SetCursorPosX((imgui.GetWindowWidth() - imgui.CalcTextSize(u8('ГЂГўГІГ®Г° Г±ГЄГ°ГЁГЇГІГ : nist1')).x) / 2)
+				imgui.Text(u8('ГЂГўГІГ®Г° Г±ГЄГ°ГЁГЇГІГ :'))
 				imgui.SameLine()
 				imgui.TextColoredRGB('{209ac9}nist1')
 			imgui.PopFont()
 			imgui.SameLine()
          imgui.SetCursorPos(imgui.ImVec2((imgui.GetWindowWidth() * 1.5 - 700) / 2, (imgui.GetWindowHeight() - 250) / 2))
 			imgui.BeginChild('Other', imgui.ImVec2(300, 195), true)
-				imgui.CenterText(u8('Небольшая информация:'))
-				if imgui.Button(u8('Blasthack аккаунт'), imgui.ImVec2(-1, 77.5)) then os.execute('explorer https://www.blast.hk/members/465668/') end
-				if imgui.Button(u8('Тема на BlastHack'), imgui.ImVec2(-1, 77.5))then os.execute('explorer https://www.blast.hk/threads/190315/') end
+				imgui.CenterText(u8('ГЌГҐГЎГ®Г«ГјГёГ Гї ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГї:'))
+				if imgui.Button(u8('Blasthack Г ГЄГЄГ ГіГ­ГІ'), imgui.ImVec2(-1, 77.5)) then os.execute('explorer https://www.blast.hk/members/465668/') end
+				if imgui.Button(u8('Г’ГҐГ¬Г  Г­Г  BlastHack'), imgui.ImVec2(-1, 77.5))then os.execute('explorer https://www.blast.hk/threads/190315/') end
             if imgui.IsItemHovered() then
                imgui.BeginTooltip()
-               imgui.Text(u8'Временно не доступно.')
+               imgui.Text(u8'Г‚Г°ГҐГ¬ГҐГ­Г­Г® Г­ГҐ Г¤Г®Г±ГІГіГЇГ­Г®.')
                imgui.EndTooltip()
             end
 			imgui.EndChild()
 		   imgui.SetCursorPosY(imgui.GetWindowHeight() * 0.875)
-		   imgui.CenterText(u8('Нашли баг/недоработку, либо хотите предложить идею для скрипта?'))
-		   imgui.CenterText(u8('Свяжитесь с Автором с помощью Blasthack.'))
+		   imgui.CenterText(u8('ГЌГ ГёГ«ГЁ ГЎГ ГЈ/Г­ГҐГ¤Г®Г°Г ГЎГ®ГІГЄГі, Г«ГЁГЎГ® ГµГ®ГІГЁГІГҐ ГЇГ°ГҐГ¤Г«Г®Г¦ГЁГІГј ГЁГ¤ГҐГѕ Г¤Г«Гї Г±ГЄГ°ГЁГЇГІГ ?'))
+		   imgui.CenterText(u8('Г‘ГўГїГ¦ГЁГІГҐГ±Гј Г± ГЂГўГІГ®Г°Г®Г¬ Г± ГЇГ®Г¬Г®Г№ГјГѕ Blasthack.'))
       elseif tab == 3 then
-         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Настройки скрипта:'), 30).x) / 2 )
-         imgui.FText(u8('Настройки скрипта:'), 30)
+         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('ГЌГ Г±ГІГ°Г®Г©ГЄГЁ Г±ГЄГ°ГЁГЇГІГ :'), 30).x) / 2 )
+         imgui.FText(u8('ГЌГ Г±ГІГ°Г®Г©ГЄГЁ Г±ГЄГ°ГЁГЇГІГ :'), 30)
          imgui.PushFont(fonts[18])
 			imgui.SetCursorPosX((imgui.GetWindowWidth() * 1.5 - 1150) / 2 - 5)
          imgui.BeginChild('settingsNotf', imgui.ImVec2(365, 419), false)
             imgui.StripChild()
             imgui.BeginChild('settingsNotfUnder', imgui.ImVec2(-1, -1), false)
-			      imgui.CenterText(u8('Настройки уведомлений:'))
-               if imgui.Checkbox(u8' Логирование входа/выхода из игры', join) then
+			      imgui.CenterText(u8('ГЌГ Г±ГІГ°Г®Г©ГЄГЁ ГіГўГҐГ¤Г®Г¬Г«ГҐГ­ГЁГ©:'))
+               if imgui.Checkbox(u8' Г‹Г®ГЈГЁГ°Г®ГўГ Г­ГЁГҐ ГўГµГ®Г¤Г /ГўГ»ГµГ®Г¤Г  ГЁГ§ ГЁГЈГ°Г»', join) then
                   jsonConfig['notifications'].join = join[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'При входе/выходе в игру получите сообщение в Telegram.')
+                  imgui.Text(u8'ГЏГ°ГЁ ГўГµГ®Г¤ГҐ/ГўГ»ГµГ®Г¤ГҐ Гў ГЁГЈГ°Гі ГЇГ®Г«ГіГ·ГЁГІГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ Гў Telegram.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Логирование урона по персонажу', damage) then
+               if imgui.Checkbox(u8' Г‹Г®ГЈГЁГ°Г®ГўГ Г­ГЁГҐ ГіГ°Г®Г­Г  ГЇГ® ГЇГҐГ°Г±Г®Г­Г Г¦Гі', damage) then
                   jsonConfig['notifications'].damage = damage[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вы получите урон, то получите сообщение в Telegram.')
+                  imgui.Text(u8'Г…Г±Г«ГЁ Г‚Г» ГЇГ®Г«ГіГ·ГЁГІГҐ ГіГ°Г®Г­, ГІГ® ГЇГ®Г«ГіГ·ГЁГІГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ Гў Telegram.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Логирование смерти персонажа', die) then
+               if imgui.Checkbox(u8' Г‹Г®ГЈГЁГ°Г®ГўГ Г­ГЁГҐ Г±Г¬ГҐГ°ГІГЁ ГЇГҐГ°Г±Г®Г­Г Г¦Г ', die) then
                   jsonConfig['notifications'].die = die[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вы умрёте, то получите сообщение в Telegram.')
+                  imgui.Text(u8'Г…Г±Г«ГЁ Г‚Г» ГіГ¬Г°ВёГІГҐ, ГІГ® ГЇГ®Г«ГіГ·ГЁГІГҐ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ Гў Telegram.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Логирование RP/NRP чата', logChat) then
+               if imgui.Checkbox(u8' Г‹Г®ГЈГЁГ°Г®ГўГ Г­ГЁГҐ RP/NRP Г·Г ГІГ ', logChat) then
                   jsonConfig['notifications'].logChat = logChat[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Отправляет в Telegram сообщения из чата.')
+                  imgui.Text(u8'ГЋГІГЇГ°Г ГўГ«ГїГҐГІ Гў Telegram Г±Г®Г®ГЎГ№ГҐГ­ГЁГї ГЁГ§ Г·Г ГІГ .')
                   imgui.EndTooltip()
                end
             imgui.EndChild()
@@ -335,63 +335,63 @@ imgui.OnFrame(function() return WinState[0] end,
          imgui.BeginChild('settings', imgui.ImVec2(365, 419), false)
             imgui.StripChild()
             imgui.BeginChild('settingsUnder', imgui.ImVec2(-1, -1), false)
-               imgui.CenterText(u8('Настройки прочего:'))
-               if imgui.Checkbox(u8' Выход из игры при отключении от сервера', autoQ) then
+               imgui.CenterText(u8('ГЌГ Г±ГІГ°Г®Г©ГЄГЁ ГЇГ°Г®Г·ГҐГЈГ®:'))
+               if imgui.Checkbox(u8' Г‚Г»ГµГ®Г¤ ГЁГ§ ГЁГЈГ°Г» ГЇГ°ГЁ Г®ГІГЄГ«ГѕГ·ГҐГ­ГЁГЁ Г®ГІ Г±ГҐГ°ГўГҐГ°Г ', autoQ) then
                   if not jsonConfig['settings'].autoOff then
                      jsonConfig['settings'].autoQ = autoQ[0]
                      json('Config.json'):save(jsonConfig)
                   elseif jsonConfig['settings'].autoOff then
-                     msg('Используйте либо выход из игры, либо выключение ПК.')
+                     msg('Г€Г±ГЇГ®Г«ГјГ§ГіГ©ГІГҐ Г«ГЁГЎГ® ГўГ»ГµГ®Г¤ ГЁГ§ ГЁГЈГ°Г», Г«ГЁГЎГ® ГўГ»ГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЏГЉ.')
                      autoQ[0] = false
                   end
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вас кикнут/забанят, то ваша игра автоматически закроется.')
+                  imgui.Text(u8'Г…Г±Г«ГЁ Г‚Г Г± ГЄГЁГЄГ­ГіГІ/Г§Г ГЎГ Г­ГїГІ, ГІГ® ГўГ ГёГ  ГЁГЈГ°Г  Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГЁ Г§Г ГЄГ°Г®ГҐГІГ±Гї.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Выключение ПК при отключении от сервера', autoOff) then
+               if imgui.Checkbox(u8' Г‚Г»ГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЏГЉ ГЇГ°ГЁ Г®ГІГЄГ«ГѕГ·ГҐГ­ГЁГЁ Г®ГІ Г±ГҐГ°ГўГҐГ°Г ', autoOff) then
                   if not jsonConfig['settings'].autoQ then
                      jsonConfig['settings'].autoOff = autoOff[0]
                      json('Config.json'):save(jsonConfig)
                   elseif jsonConfig['settings'].autoQ then
-                     msg('Используйте либо выход из игры, либо выключение ПК.')
+                     msg('Г€Г±ГЇГ®Г«ГјГ§ГіГ©ГІГҐ Г«ГЁГЎГ® ГўГ»ГµГ®Г¤ ГЁГ§ ГЁГЈГ°Г», Г«ГЁГЎГ® ГўГ»ГЄГ«ГѕГ·ГҐГ­ГЁГҐ ГЏГЉ.')
                      autoOff[0] = false
                   end
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Если Вас кикнут/забанят, то ваш ПК автоматически выключится.')
+                  imgui.Text(u8'Г…Г±Г«ГЁ Г‚Г Г± ГЄГЁГЄГ­ГіГІ/Г§Г ГЎГ Г­ГїГІ, ГІГ® ГўГ Гё ГЏГЉ Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГЁ ГўГ»ГЄГ«ГѕГ·ГЁГІГ±Гї.')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Получать статистику по команде в Telegram', statsCmd) then
+               if imgui.Checkbox(u8' ГЏГ®Г«ГіГ·Г ГІГј Г±ГІГ ГІГЁГ±ГІГЁГЄГі ГЇГ® ГЄГ®Г¬Г Г­Г¤ГҐ Гў Telegram', statsCmd) then
                   jsonConfig['settings'].statsCmd = statsCmd[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Отправляет вашу статистику.')
-                  imgui.Text(u8'Команда в Telegram: /stats')
+                  imgui.Text(u8'ГЋГІГЇГ°Г ГўГ«ГїГҐГІ ГўГ ГёГі Г±ГІГ ГІГЁГ±ГІГЁГЄГі.')
+                  imgui.Text(u8'ГЉГ®Г¬Г Г­Г¤Г  Гў Telegram: /stats')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Закрывать игру по команде в Telegram', qCmd) then
+               if imgui.Checkbox(u8' Г‡Г ГЄГ°Г»ГўГ ГІГј ГЁГЈГ°Гі ГЇГ® ГЄГ®Г¬Г Г­Г¤ГҐ Гў Telegram', qCmd) then
                   jsonConfig['settings'].qCmd = qCmd[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Выходит из игры.')
-                  imgui.Text(u8'Команда в Telegram: /q')
+                  imgui.Text(u8'Г‚Г»ГµГ®Г¤ГЁГІ ГЁГ§ ГЁГЈГ°Г».')
+                  imgui.Text(u8'ГЉГ®Г¬Г Г­Г¤Г  Гў Telegram: /q')
                   imgui.EndTooltip()
                end
-               if imgui.Checkbox(u8' Выключать ПК по команде в Telegram', offCmd) then
+               if imgui.Checkbox(u8' Г‚Г»ГЄГ«ГѕГ·Г ГІГј ГЏГЉ ГЇГ® ГЄГ®Г¬Г Г­Г¤ГҐ Гў Telegram', offCmd) then
                   jsonConfig['settings'].offCmd = offCmd[0]
                   json('Config.json'):save(jsonConfig)
                end
                if imgui.IsItemHovered() then
                   imgui.BeginTooltip()
-                  imgui.Text(u8'Выключает ПК.')
-                  imgui.Text(u8'Команда в Telegram: /off')
+                  imgui.Text(u8'Г‚Г»ГЄГ«ГѕГ·Г ГҐГІ ГЏГЉ.')
+                  imgui.Text(u8'ГЉГ®Г¬Г Г­Г¤Г  Гў Telegram: /off')
                   imgui.EndTooltip()
                end
             imgui.EndChild()
@@ -543,7 +543,7 @@ function checkUpdates()
       if status == dlstatus.STATUS_ENDDOWNLOADDATA then
          updateIni = inicfg.load(nil, update_path)
          if tonumber(updateIni.main.version) > tonumber(thisScript().version) then
-            msg('Внимание! Было найдено обновление, обновляюсь..') 
+            msg('Г‚Г­ГЁГ¬Г Г­ГЁГҐ! ГЃГ»Г«Г® Г­Г Г©Г¤ГҐГ­Г® Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГҐ, Г®ГЎГ­Г®ГўГ«ГїГѕГ±Гј..') 
             update_state = true
          end
          os.remove(update_path)
@@ -553,18 +553,18 @@ end
 
 function samp.onSetPlayerHealth(health)
 	if health ~= lastHealth and jsonConfig['notifications'].damage and sampGetGamestate() == 3 then
-		sendTelegramNotification('Ваше здоровье изменено!\nТекущее ХП: ' .. health)
+		sendTelegramNotification('Г‚Г ГёГҐ Г§Г¤Г®Г°Г®ГўГјГҐ ГЁГ§Г¬ГҐГ­ГҐГ­Г®!\nГ’ГҐГЄГіГ№ГҐГҐ Г•ГЏ: ' .. health)
 	end
 	lastHealth = health
 end
 
 function samp.onServerMessage(color, text)
-   if text:find('^%s*%(%( Через 30 секунд вы сможете сразу отправиться в больницу или подождать врачей %)%)%s*$') then
+   if text:find('^%s*%(%( Г—ГҐГ°ГҐГ§ 30 Г±ГҐГЄГіГ­Г¤ ГўГ» Г±Г¬Г®Г¦ГҐГІГҐ Г±Г°Г Г§Гі Г®ГІГЇГ°Г ГўГЁГІГјГ±Гї Гў ГЎГ®Г«ГјГ­ГЁГ¶Гі ГЁГ«ГЁ ГЇГ®Г¤Г®Г¦Г¤Г ГІГј ГўГ°Г Г·ГҐГ© %)%)%s*$') then
       if jsonConfig['notifications'].die then
-         sendTelegramNotification('Ваш персонаж умер!')
+         sendTelegramNotification('Г‚Г Гё ГЇГҐГ°Г±Г®Г­Г Г¦ ГіГ¬ГҐГ°!')
       end
    end
-   if text:find(".*%[%d+%] говорит:") then 
+   if text:find(".*%[%d+%] ГЈГ®ГўГ®Г°ГЁГІ:") then 
       if jsonConfig['notifications'].logChat then
          sendTelegramNotification(text)
       end
@@ -580,34 +580,34 @@ end
 
 function onReceivePacket(id)
 	local notificationsJoinLeave = {
-		[34] = {'Вы подключились к серверу!', 'ID_CONNECTION_REQUEST_ACCEPTED', jsonConfig['notifications'].join},
-		[35] = {'Попытка подключения не удалась!', 'ID_CONNECTION_ATTEMPT_FAILED', jsonConfig['notifications'].join},
-		[37] = {'Неправильный пароль от сервера!', 'ID_INVALID_PASSWORD', jsonConfig['notifications'].join}
+		[34] = {'Г‚Г» ГЇГ®Г¤ГЄГ«ГѕГ·ГЁГ«ГЁГ±Гј ГЄ Г±ГҐГ°ГўГҐГ°Гі!', 'ID_CONNECTION_REQUEST_ACCEPTED', jsonConfig['notifications'].join},
+		[35] = {'ГЏГ®ГЇГ»ГІГЄГ  ГЇГ®Г¤ГЄГ«ГѕГ·ГҐГ­ГЁГї Г­ГҐ ГіГ¤Г Г«Г Г±Гј!', 'ID_CONNECTION_ATTEMPT_FAILED', jsonConfig['notifications'].join},
+		[37] = {'ГЌГҐГЇГ°Г ГўГЁГ«ГјГ­Г»Г© ГЇГ Г°Г®Г«Гј Г®ГІ Г±ГҐГ°ГўГҐГ°Г !', 'ID_INVALID_PASSWORD', jsonConfig['notifications'].join}
 	}
 	if notificationsJoinLeave[id] and notificationsJoinLeave[id][3] then
 		sendTelegramNotification(notificationsJoinLeave[id][1])
 	end
    local notificationsJoinLeaveIfAuto = {
-		[32] = {'Сервер закрыл соединение!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['notifications'].join},
-		[33] = {'Соединение потеряно!', 'ID_CONNECTION_LOST', jsonConfig['notifications'].join},
+		[32] = {'Г‘ГҐГ°ГўГҐГ° Г§Г ГЄГ°Г»Г« Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['notifications'].join},
+		[33] = {'Г‘Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ ГЇГ®ГІГҐГ°ГїГ­Г®!', 'ID_CONNECTION_LOST', jsonConfig['notifications'].join},
 	}
 	if notificationsJoinLeaveIfAuto[id] and notificationsJoinLeaveIfAuto[id][3] and not jsonConfig['settings'].autoQ and not jsonConfig['settings'].autoOff then
 		sendTelegramNotification(notificationsJoinLeaveIfAuto[id][1])
 	end
    local LocalAutoQ = {
-		[32] = {'Сервер закрыл соединение!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoQ},
-		[33] = {'Соединение потеряно!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoQ},
+		[32] = {'Г‘ГҐГ°ГўГҐГ° Г§Г ГЄГ°Г»Г« Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoQ},
+		[33] = {'Г‘Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ ГЇГ®ГІГҐГ°ГїГ­Г®!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoQ},
 	}
 	if LocalAutoQ[id] and LocalAutoQ[id][3] then
-		sendTelegramNotification(list_packet[id][1]..'\nВаша игра выключена.')
+		sendTelegramNotification(list_packet[id][1]..'\nГ‚Г ГёГ  ГЁГЈГ°Г  ГўГ»ГЄГ«ГѕГ·ГҐГ­Г .')
       ffi.C.ExitProcess(0)
 	end
    local LocalAutoOff = {
-		[32] = {'Сервер закрыл соединение!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoOff},
-		[33] = {'Соединение потеряно!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoOff},
+		[32] = {'Г‘ГҐГ°ГўГҐГ° Г§Г ГЄГ°Г»Г« Г±Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ!', 'ID_DISCONNECTION_NOTIFICATION', jsonConfig['settings'].autoOff},
+		[33] = {'Г‘Г®ГҐГ¤ГЁГ­ГҐГ­ГЁГҐ ГЇГ®ГІГҐГ°ГїГ­Г®!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoOff},
 	}
 	if LocalAutoOff[id] and LocalAutoOff[id][3] then
-		sendTelegramNotification(LocalAutoOff[id][1]..'\nВаш компьютер выключен.')
+		sendTelegramNotification(LocalAutoOff[id][1]..'\nГ‚Г Гё ГЄГ®Г¬ГЇГјГѕГІГҐГ° ГўГ»ГЄГ«ГѕГ·ГҐГ­.')
       os.execute('shutdown /s /t 5')
 	end
 end
@@ -657,27 +657,27 @@ function encodeUrl(str)
    return u8:encode(str, 'CP1251')
 end
 
-function sendTelegramNotification(msg) -- функция для отправки сообщения юзеру
-   msg = msg:gsub('{......}', '') --тут типо убираем цвет
-   msg = encodeUrl(msg) -- ну тут мы закодируем строку
-   async_http_request('https://api.telegram.org/bot' .. jsonConfig['notifications'].inputToken .. '/sendMessage?chat_id=' .. jsonConfig['notifications'].inputUser .. '&text='..msg,'', function(result) end) -- а тут уже отправка
+function sendTelegramNotification(msg) -- ГґГіГ­ГЄГ¶ГЁГї Г¤Г«Гї Г®ГІГЇГ°Г ГўГЄГЁ Г±Г®Г®ГЎГ№ГҐГ­ГЁГї ГѕГ§ГҐГ°Гі
+   msg = msg:gsub('{......}', '') --ГІГіГІ ГІГЁГЇГ® ГіГЎГЁГ°Г ГҐГ¬ Г¶ГўГҐГІ
+   msg = encodeUrl(msg) -- Г­Гі ГІГіГІ Г¬Г» Г§Г ГЄГ®Г¤ГЁГ°ГіГҐГ¬ Г±ГІГ°Г®ГЄГі
+   async_http_request('https://api.telegram.org/bot' .. jsonConfig['notifications'].inputToken .. '/sendMessage?chat_id=' .. jsonConfig['notifications'].inputUser .. '&text='..msg,'', function(result) end) -- Г  ГІГіГІ ГіГ¦ГҐ Г®ГІГЇГ°Г ГўГЄГ 
 end
 
-function get_telegram_updates() -- функция получения сообщений от юзера
-   while not updateid do wait(1) end -- ждем пока не узнаем последний ID
+function get_telegram_updates() -- ГґГіГ­ГЄГ¶ГЁГї ГЇГ®Г«ГіГ·ГҐГ­ГЁГї Г±Г®Г®ГЎГ№ГҐГ­ГЁГ© Г®ГІ ГѕГ§ГҐГ°Г 
+   while not updateid do wait(1) end -- Г¦Г¤ГҐГ¬ ГЇГ®ГЄГ  Г­ГҐ ГіГ§Г­Г ГҐГ¬ ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© ID
    local runner = requestRunner()
    local reject = function() end
    local args = ''
    while true do
-      url = 'https://api.telegram.org/bot'..jsonConfig['notifications'].inputToken..'/getUpdates?chat_id='..jsonConfig['notifications'].inputUser..'&offset=-1' -- создаем ссылку
+      url = 'https://api.telegram.org/bot'..jsonConfig['notifications'].inputToken..'/getUpdates?chat_id='..jsonConfig['notifications'].inputUser..'&offset=-1' -- Г±Г®Г§Г¤Г ГҐГ¬ Г±Г±Г»Г«ГЄГі
       threadHandle(runner, url, args, processing_telegram_messages, reject)
       wait(0)
    end
 end
 
-function processing_telegram_messages(result) -- функция проверОчки того что отправил чел
+function processing_telegram_messages(result) -- ГґГіГ­ГЄГ¶ГЁГї ГЇГ°Г®ГўГҐГ°ГЋГ·ГЄГЁ ГІГ®ГЈГ® Г·ГІГ® Г®ГІГЇГ°Г ГўГЁГ« Г·ГҐГ«
    if result then
-      -- тута мы проверяем все ли верно
+      -- ГІГіГІГ  Г¬Г» ГЇГ°Г®ГўГҐГ°ГїГҐГ¬ ГўГ±ГҐ Г«ГЁ ГўГҐГ°Г­Г®
       local proc_table = decodeJson(result)
       if proc_table.ok then
          if #proc_table.result > 0 then
@@ -687,34 +687,34 @@ function processing_telegram_messages(result) -- функция проверОчки того что отп
                   updateid = res_table.update_id
                   local message_from_user = res_table.message.text
                   if message_from_user then
-                     -- и тут если чел отправил текст мы сверяем
-                     local textTg = u8:decode(message_from_user) .. ' ' --добавляем в конец пробел дабы не произошли тех. шоколадки с командами(типо чтоб !q не считалось как !qq)
+                     -- ГЁ ГІГіГІ ГҐГ±Г«ГЁ Г·ГҐГ« Г®ГІГЇГ°Г ГўГЁГ« ГІГҐГЄГ±ГІ Г¬Г» Г±ГўГҐГ°ГїГҐГ¬
+                     local textTg = u8:decode(message_from_user) .. ' ' --Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ Гў ГЄГ®Г­ГҐГ¶ ГЇГ°Г®ГЎГҐГ« Г¤Г ГЎГ» Г­ГҐ ГЇГ°Г®ГЁГ§Г®ГёГ«ГЁ ГІГҐГµ. ГёГ®ГЄГ®Г«Г Г¤ГЄГЁ Г± ГЄГ®Г¬Г Г­Г¤Г Г¬ГЁ(ГІГЁГЇГ® Г·ГІГ®ГЎ !q Г­ГҐ Г±Г·ГЁГІГ Г«Г®Г±Гј ГЄГ ГЄ !qq)
                      if textTg:match('^/q') then
                         if jsonConfig['settings'].qCmd then
-                           sendTelegramNotification('Игра успешно закрыта.')
+                           sendTelegramNotification('Г€ГЈГ°Г  ГіГ±ГЇГҐГёГ­Г® Г§Г ГЄГ°Г»ГІГ .')
                            ffi.C.ExitProcess(0)
                         elseif not jsonConfig['settings'].qCmd then
-                           sendTelegramNotification('Данная функция отключена!\nВключить можно в настройках скрипта.')
+                           sendTelegramNotification('Г„Г Г­Г­Г Гї ГґГіГ­ГЄГ¶ГЁГї Г®ГІГЄГ«ГѕГ·ГҐГ­Г !\nГ‚ГЄГ«ГѕГ·ГЁГІГј Г¬Г®Г¦Г­Г® Гў Г­Г Г±ГІГ°Г®Г©ГЄГ Гµ Г±ГЄГ°ГЁГЇГІГ .')
                         end
                      elseif textTg:match('^/off') then
                         if jsonConfig['settings'].offCmd then
-                           sendTelegramNotification('Ваш ПК выключится через 5 секунд.')
+                           sendTelegramNotification('Г‚Г Гё ГЏГЉ ГўГ»ГЄГ«ГѕГ·ГЁГІГ±Гї Г·ГҐГ°ГҐГ§ 5 Г±ГҐГЄГіГ­Г¤.')
                            os.execute('shutdown /s /t 5')
                         elseif not jsonConfig['settings'].offCmd then
-                           sendTelegramNotification('Данная функция отключена!\nВключить можно в настройках скрипта.')
+                           sendTelegramNotification('Г„Г Г­Г­Г Гї ГґГіГ­ГЄГ¶ГЁГї Г®ГІГЄГ«ГѕГ·ГҐГ­Г !\nГ‚ГЄГ«ГѕГ·ГЁГІГј Г¬Г®Г¦Г­Г® Гў Г­Г Г±ГІГ°Г®Г©ГЄГ Гµ Г±ГЄГ°ГЁГЇГІГ .')
                         end
                      elseif textTg:match('^/stats') then
                         if jsonConfig['settings'].statsCmd then
-                           sendTelegramNotification('Вот ваша статистика:')
+                           sendTelegramNotification('Г‚Г®ГІ ГўГ ГёГ  Г±ГІГ ГІГЁГ±ГІГЁГЄГ :')
                            stats = true
                            sampSendChat('/stats')
                         elseif not jsonConfig['settings'].statsCmd then
-                           sendTelegramNotification('Данная функция отключена!\nВключить можно в настройках скрипта.')
+                           sendTelegramNotification('Г„Г Г­Г­Г Гї ГґГіГ­ГЄГ¶ГЁГї Г®ГІГЄГ«ГѕГ·ГҐГ­Г !\nГ‚ГЄГ«ГѕГ·ГЁГІГј Г¬Г®Г¦Г­Г® Гў Г­Г Г±ГІГ°Г®Г©ГЄГ Гµ Г±ГЄГ°ГЁГЇГІГ .')
                         end
                      elseif textTg:match('^/help') then
-                        sendTelegramNotification('Список доступных команд:\n\n/off - Выключает Ваш компьютер.\n/q - Выходит из игры.\n/stats - Отправляет Вашу статистику из игры.')
-                     else -- если же не найдется ни одна из команд выше, выведем сообщение
-                        sendTelegramNotification('Такой команды не существует!\nСписок команд в /help')
+                        sendTelegramNotification('Г‘ГЇГЁГ±Г®ГЄ Г¤Г®Г±ГІГіГЇГ­Г»Гµ ГЄГ®Г¬Г Г­Г¤:\n\n/off - Г‚Г»ГЄГ«ГѕГ·Г ГҐГІ Г‚Г Гё ГЄГ®Г¬ГЇГјГѕГІГҐГ°.\n/q - Г‚Г»ГµГ®Г¤ГЁГІ ГЁГ§ ГЁГЈГ°Г».\n/stats - ГЋГІГЇГ°Г ГўГ«ГїГҐГІ Г‚Г ГёГі Г±ГІГ ГІГЁГ±ГІГЁГЄГі ГЁГ§ ГЁГЈГ°Г».')
+                     else -- ГҐГ±Г«ГЁ Г¦ГҐ Г­ГҐ Г­Г Г©Г¤ГҐГІГ±Гї Г­ГЁ Г®Г¤Г­Г  ГЁГ§ ГЄГ®Г¬Г Г­Г¤ ГўГ»ГёГҐ, ГўГ»ГўГҐГ¤ГҐГ¬ Г±Г®Г®ГЎГ№ГҐГ­ГЁГҐ
+                        sendTelegramNotification('Г’Г ГЄГ®Г© ГЄГ®Г¬Г Г­Г¤Г» Г­ГҐ Г±ГіГ№ГҐГ±ГІГўГіГҐГІ!\nГ‘ГЇГЁГ±Г®ГЄ ГЄГ®Г¬Г Г­Г¤ Гў /help')
                      end
                   end
                end
