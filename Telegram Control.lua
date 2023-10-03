@@ -1,6 +1,6 @@
 script_name('Telegram Control')
 script_author('nist1')
-script_version("1.3")
+script_version("1.4")
 script_properties('work-in-pause') 
 
 local imgui_check, imgui			= pcall(require, 'mimgui')
@@ -115,6 +115,7 @@ local jsonConfig = json('Config.json'):load({
       dial = false,
       givedItems = false,
       payDay = false,
+      logAllChat = false,
    },
    ['settings'] = {
       autoQ = false,
@@ -128,8 +129,7 @@ local jsonConfig = json('Config.json'):load({
 
 -->> Settings For Check Updates
 local UPDATE = {
-   url = "https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/update.json",
-   log = {}
+   url = "https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/update.json"
 }
 
 -->> Notifications Settings
@@ -140,6 +140,7 @@ local die = new.bool(jsonConfig['notifications'].die)
 local dial = new.bool(jsonConfig['notifications'].dial)
 local logChat = new.bool(jsonConfig['notifications'].logChat)
 local givedItems = new.bool(jsonConfig['notifications'].givedItems)
+local logAllChat = new.bool(jsonConfig['notifications'].logAllChat)
 local payDay = new.bool(jsonConfig['notifications'].payDay)
 local autoQ = new.bool(jsonConfig['settings'].autoQ)
 local autoOff = new.bool(jsonConfig['settings'].autoOff)
@@ -230,12 +231,12 @@ imgui.OnFrame(function() return WinState[0] end,
          imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Список Обновлений:'), 30).x) / 2 )
 			imgui.FText(u8('Список Обновлений:'), 30)
          imgui.BeginChild('news', imgui.ImVec2(-1, -1), false)
-            imgui.BeginChild('##update5', imgui.ImVec2(-1, 110), true)
+            imgui.BeginChild('##update5', imgui.ImVec2(-1, 86), true)
             imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Обновление #1.4'), 30).x) / 2 )
             imgui.FText(u8('Обновление #1.4'), 30)
             imgui.FText(u8'- Система автообновления скрипта', 18)
             imgui.FText(u8'- Логирование всего чата в Telegram', 18)
-            date_text = u8('От ') .. '3.10.2023'
+            date_text = u8('От ') .. '03.10.2023'
             imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
             imgui.FText('{TextDisabled}' .. date_text, 18)
             imgui.EndChild()
@@ -243,7 +244,7 @@ imgui.OnFrame(function() return WinState[0] end,
             imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Обновление #1.3'), 30).x) / 2 )
             imgui.FText(u8('Обновление #1.3'), 30)
             imgui.FText(u8'- Исправление незначительных ошибок', 18)
-            date_text = u8('От ') .. '1.10.2023'
+            date_text = u8('От ') .. '01.10.2023'
             imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
             imgui.FText('{TextDisabled}' .. date_text, 18)
             imgui.EndChild()
@@ -310,7 +311,7 @@ imgui.OnFrame(function() return WinState[0] end,
                   json('Config.json'):save(jsonConfig)
                end
                imgui.Hint('join', u8'При входе/выходе в игру\nВы получите сообщение в Telegram.')
-               if imgui.Checkbox(u8' Логирование здоровья персонажа по персонажу', damage) then
+               if imgui.Checkbox(u8' Логирование здоровья персонажа', damage) then
                   jsonConfig['notifications'].damage = damage[0]
                   json('Config.json'):save(jsonConfig)
                end
@@ -321,10 +322,31 @@ imgui.OnFrame(function() return WinState[0] end,
                end
                imgui.Hint('die', u8'При смерти персонажа\nВы получите сообщение в Telegram.')
                if imgui.Checkbox(u8' Логирование RP/NRP чата', logChat) then
-                  jsonConfig['notifications'].logChat = logChat[0]
-                  json('Config.json'):save(jsonConfig)
+                  if jsonConfig['notifications'].logAllChat then
+                     logAllChat[0] = false
+                     jsonConfig['notifications'].logChat = logChat[0]
+                     jsonConfig['notifications'].logAllChat = logAllChat[0]
+                     json('Config.json'):save(jsonConfig)
+                     msg('Вы не можете одновременно включить эти две функции!')
+                  elseif not jsonConfig['notifications'].logAllChat then
+                     jsonConfig['notifications'].logChat = logChat[0]
+                     json('Config.json'):save(jsonConfig)
+                  end
                end
                imgui.Hint('logChat', u8'Отправляет RP и NonRP чат в Telegram.')
+               if imgui.Checkbox(u8" Логирование всего чата", logAllChat) then
+                  if jsonConfig['notifications'].logChat then
+                     logChat[0] = false
+                     jsonConfig['notifications'].logChat = logChat[0]
+                     jsonConfig['notifications'].logAllChat = logAllChat[0]
+                     json('Config.json'):save(jsonConfig)
+                     msg('Вы не можете одновременно включить эти две функции!')
+                  elseif not jsonConfig['notifications'].logChat then
+                     jsonConfig['notifications'].logAllChat = logAllChat[0]
+                     json('Config.json'):save(jsonConfig)
+                  end
+               end
+               imgui.Hint('logAllChat', u8"Абсолютно все сообщения из чата\nбудут отправлены в Telegram.")
                if imgui.Checkbox(u8' Логирование открывающихся диалогов', dial) then 
                   jsonConfig['notifications'].dial = dial[0]
                   json('Config.json'):save(jsonConfig)
@@ -351,22 +373,28 @@ imgui.OnFrame(function() return WinState[0] end,
             imgui.BeginChild('settingsUnder', imgui.ImVec2(-1, -1), false)
                imgui.CenterText(u8('Настройки прочего:'))
                if imgui.Checkbox(u8' Выход из игры при отключении от сервера', autoQ) then
-                  if not jsonConfig['settings'].autoOff then
+                  if jsonConfig['settings'].autoOff then
+                     autoOff[0] = false
+                     jsonConfig['settings'].autoOff = autoOff[0]
                      jsonConfig['settings'].autoQ = autoQ[0]
                      json('Config.json'):save(jsonConfig)
-                  elseif jsonConfig['settings'].autoOff then
-                     msg('Можно использовать только одно из двух!')
-                     autoQ[0] = false
+                     msg('Вы не можете одновременно включить эти две функции!')
+                  elseif not jsonConfig['settings'].autoOff then
+                     jsonConfig['settings'].autoQ = autoQ[0]
+                     json('Config.json'):save(jsonConfig)
                   end
                end
                imgui.Hint('quitGame', u8'Если Вы покинете сервер по какой-то причине, \nто ваша игра автоматически закроется.')
                if imgui.Checkbox(u8' Выключение ПК при отключении от сервера', autoOff) then
-                  if not jsonConfig['settings'].autoQ then
+                  if jsonConfig['settings'].autoQ then
+                     autoQ[0] = false
+                     jsonConfig['settings'].autoQ = autoQ[0]
                      jsonConfig['settings'].autoOff = autoOff[0]
                      json('Config.json'):save(jsonConfig)
-                  elseif jsonConfig['settings'].autoQ then
-                     msg('Можно использовать только одно из двух!')
-                     autoOff[0] = false
+                     msg('Вы не можете одновременно включить эти две функции!')
+                  elseif not jsonConfig['settings'].autoQ then
+                     jsonConfig['settings'].autoOff = autoOff[0]
+                     json('Config.json'):save(jsonConfig)
                   end
                end
                imgui.Hint('offPC', u8'Если Вы покинете сервер по какой-то причине, \nто ваш ПК автоматически выключится.')
@@ -739,23 +767,19 @@ end
 
 -->> Autoupdate
 function checkUpdate()
-   msg("Проверяю на наличие обновлений..")
    local upd_res = nil
 
    asyncHttpRequest('GET', UPDATE.url, { headers = { ["Cache-Control"] = "no-cache" } }, 
-      function(res) print(res.text) upd_res = decodeJson(u8:decode(res.text)) end
+      function(res) upd_res = decodeJson(res.text) end
    )
 
    if upd_res then
-      if upd_res.changelog then UPDATE.log = upd_res.changelog end
       if thisScript().version ~= upd_res.version then
          if upd_res.url then
             downloadUpdate(upd_res.url)
          else
             msg("Возникла ошибка при обновлении!")
-            end
-      else
-         msg("У вас актуальная версия!")
+         end
       end
    else
       msg("Возникла ошибка при проверке обновления!")
@@ -763,7 +787,8 @@ function checkUpdate()
 end
 
 function downloadUpdate(url)
-   msg("Новая версия найдена! Устанавливаю..")
+   msg("Доступно обновление! Версия: {308ad9}#"..upd_res.version)
+   msg("Устанавливаю новую версию...")
    local update_status = 'process'
    downloadUrlToFile(url, thisScript().path, function(id, status, p1, p2)
       if status == dlstatus.STATUS_DOWNLOADINGDATA then
@@ -779,7 +804,7 @@ function downloadUpdate(url)
    if update_status == 'failed' then
       msg("Возникла ошибка при загрузке обновления!")
    else
-      msg("Скрипт обновлён до новой версии!")
+      msg("Загрузка обновления завершена.")
       thisScript():reload()
       wait(1000)
    end
@@ -881,7 +906,7 @@ function samp.onServerMessage(color, text)
    end
    if text:find('__________________________________') and not text:find('%[%d+%]') then 
       if jsonConfig['notifications'].payDay then
-         sendTelegramNotification('Вы забрали PayDay!\n\nОрганизационная зарплата: '..givedMoney..'\nДепозит в банке: '..givedDep..'\nТекущая сумма в банке: '..bankMoney..'\nТекущая сумма на депозите: '..bankDep) 
+         sendTelegramNotification('Вы получили PayDay!\n\nОрганизационная зарплата: '..givedMoney..'\nДепозит в банке: '..givedDep..'\nТекущая сумма в банке: '..bankMoney..'\nТекущая сумма на депозите: '..bankDep) 
       end
    end
    if text:find("Вам был добавлен предмет '(.+)'. Чтобы открыть инвентарь используйте клавишу 'Y' или /invent") and not text:find('%[%d+%]') then
@@ -889,6 +914,10 @@ function samp.onServerMessage(color, text)
          local givedItem = text:match("Вам был добавлен предмет '(.+)'. Чтобы открыть инвентарь используйте клавишу 'Y' или /invent")
          sendTelegramNotification('Вам был добавлен предмет "'..givedItem..'"!')
       end
+   end
+   if jsonConfig['notifications'].logAllChat then
+      local logAllChatText = text:gsub('{......}', '')
+      sendTelegramNotification(logAllChatText)
    end
    if text:find(".*%[%d+%] говорит:") then 
       if jsonConfig['notifications'].logChat then
