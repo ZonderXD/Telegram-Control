@@ -770,7 +770,7 @@ function checkUpdate()
    local upd_res = nil
 
    asyncHttpRequest('GET', UPDATE.url, { headers = { ["Cache-Control"] = "no-cache" } }, 
-      function(res) upd_res = decodeJson(res.text) end
+      function(res) upd_res = decodeJson(u8:decode(res.text)) end
    )
 
    if upd_res then
