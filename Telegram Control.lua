@@ -129,10 +129,6 @@ local jsonConfig = json('Config.json'):load({
    }
 })
 
--->> Settings For Check Updates
-local update_url = 'https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/script-version.ini'
-local update_path = getWorkingDirectory()..'\\Telegram Control\\update.ini'
-
 -->> Notifications Settings
 local inputToken, inputUser = imgui.new.char[128](jsonConfig['notifications'].inputToken), imgui.new.char[128](jsonConfig['notifications'].inputUser)
 local join = new.bool(jsonConfig['notifications'].join)
@@ -156,9 +152,9 @@ function main()
    getLastUpdate()
    lua_thread.create(get_telegram_updates)
    while not sampIsLocalPlayerSpawned() do wait(0) end
+   checkUpdate()
 	msg('Загружен! Активации: {308ad9}/tgc')
 	sampRegisterChatCommand('tgc', function() WinState[0] = not WinState[0] end)
-   checkUpdates()
 	while true do wait(0)
 	end
 end
@@ -767,7 +763,7 @@ end
 function downloadUpdate(url)
    msg("Обновление найдено! Загружаю обновление..")
    local update_status = 'process'
-   downloadUrlToFile(url, temp_file, function(id, status, p1, p2) -- загружаем файл
+   downloadUrlToFile(url, thisScript().path, function(id, status, p1, p2) -- загружаем файл
       if status == dlstatus.STATUS_DOWNLOADINGDATA then
          update_status = 'process'
       elseif status == dlstatus.STATUS_ENDDOWNLOADDATA then
@@ -780,9 +776,8 @@ function downloadUpdate(url)
    while update_status == 'process' do wait(0) end -- ждем загрузки файла
    if update_status == 'failed' then -- если произошла какая-то ошибка
       msg("Возникла ошибка при загрузке обновления!")
-   else
+   elseif update_status == 'succ' then
       msg("Обновление установлено!")
-      msg("Приятной игры.")
       thisScript():reload() -- перезагружаем скрипт
       wait(1000) -- задержка от выполнения следующих команд в main()
    end
@@ -827,23 +822,6 @@ end
 -->> Other Function
 function msg(text)
 	sampAddChatMessage(string.format('[%s] {FFFFFF}%s', thisScript().name, text), 0x308ad9)
-end
-
-function checkUpdates()
-   downloadUrlToFile(update_url, update_path, function(id, status)
-      if status == dlstatus.STATUS_ENDDOWNLOADDATA then
-         lua_thread.create(function() wait(100) end)
-         updateIni = inicfg.load(nil, update_path)
-         if tonumber(updateIni.main.version) > tonumber(thisScript().version) or tonumber(updateIni.main.version) < tonumber(thisScript().version) then 
-            msg('Найдено обновление! Данная версия не актуальна и больше не работает.')
-            msg('Советуем скачать новую версию скрипта в теме на BlastHack.')
-            msg('Если вы не нашли тему со скриптом, то она на проверке у модераторов.')
-            os.remove(update_path) 
-            thisScript():unload()
-         end
-         os.remove(update_path)
-      end
-   end)
 end
 
 function samp.onSetPlayerHealth(health)
