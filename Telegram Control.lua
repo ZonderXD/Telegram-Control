@@ -787,7 +787,7 @@ function checkUpdate()
 end
 
 function downloadUpdate(url)
-   msg("Доступно обновление! Версия: {308ad9}#"..upd_res.version)
+   msg("Доступно обновление! Версия: {308ad9}#1.4")
    msg("Устанавливаю новую версию...")
    local update_status = 'process'
    downloadUrlToFile(url, thisScript().path, function(id, status, p1, p2)
@@ -797,7 +797,7 @@ function downloadUpdate(url)
          update_status = 'succ'
       elseif status == 64 then
          update_status = 'failed' 
-       end
+      end
    end)
 
    while update_status == 'process' do wait(0) end
