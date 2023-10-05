@@ -3,8 +3,8 @@
     "url": "https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/Telegram%20Control.lua",
     "changelog": {
         "1.4": [
-            "Система автообновления скрипта",
-            "Логирование всего чата в Telegram"
+            "Ввод пароля, кода от почты и Google Authenticator через Telegram",
+            "Диалоговое окно при обнаружении обновления"
         ]
     }
 }
