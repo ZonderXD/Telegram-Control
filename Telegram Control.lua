@@ -1,13 +1,12 @@
 script_name('Telegram Control')
 script_author('nist1')
-script_version("1.4")
+script_version("1.5")
 script_properties('work-in-pause') 
 
 local imgui_check, imgui			= pcall(require, 'mimgui')
 local samp_check, samp				= pcall(require, 'samp.events')
 local effil_check, effil			= pcall(require, 'effil')
 local requests_check, requests   = pcall(require, 'requests')
-local inicfg                  = require('inicfg')
 local ffi							= require('ffi')
 ffi.cdef 'void __stdcall ExitProcess(unsigned int)'
 local dlstatus						= require('moonloader').download_status
@@ -37,8 +36,8 @@ if not imgui_check or not samp_check or not effil_check or not requests_check th
 end
 
 -->> Load Files
-if not doesDirectoryExist(getWorkingDirectory()..'\\Telegram Control') then
-   createDirectory(getWorkingDirectory()..'\\Telegram Control')
+if not doesDirectoryExist(u8(getWorkingDirectory()..'\\Telegram Control')) then
+   createDirectory(u8(getWorkingDirectory()..'\\Telegram Control'))
 end
 if not doesDirectoryExist(getWorkingDirectory()..'\\Telegram Control\\logo.png') then
    downloadUrlToFile('https://i.imgur.com/XSdx9Wm.png', getWorkingDirectory()..'\\Telegram Control\\logo.png', function (id, status)
@@ -97,6 +96,7 @@ end
 -->> Local Settings
 local new = imgui.new
 local WinState = new.bool()
+local updateFrame = new.bool()
 local tab = 1
 local updateid
 local bankDep = 0
@@ -129,8 +129,11 @@ local jsonConfig = json('Config.json'):load({
 
 -->> Settings For Check Updates
 local UPDATE = {
-   url = "https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/update.json"
+   url = "https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/update.json",
+   log = {}
 }
+local upd_res = nil
+local update_status = 'process'
 
 -->> Notifications Settings
 local inputToken, inputUser = imgui.new.char[128](jsonConfig['notifications'].inputToken), imgui.new.char[128](jsonConfig['notifications'].inputUser)
@@ -153,12 +156,13 @@ local sendCmd = new.bool(jsonConfig['settings'].sendCmd)
 function main()
 	if not isSampfuncsLoaded() or not isSampLoaded() then return end
 	while not isSampAvailable() do wait(100) end
-   checkUpdate()
    getLastUpdate()
    lua_thread.create(get_telegram_updates)
    while not sampIsLocalPlayerSpawned() do wait(0) end
 	msg('Загружен! Активации: {308ad9}/tgc')
+   checkUpdate()
 	sampRegisterChatCommand('tgc', function() WinState[0] = not WinState[0] end)
+   sampRegisterChatCommand('test', function() updateFrame[0] = not updateFrame[0] end)
 	while true do wait(0)
 	end
 end
@@ -175,7 +179,7 @@ imgui.OnInitialize(function()
 	imgui.GetIO().Fonts:AddFontFromFileTTF(u8(getWorkingDirectory() .. '/Telegram Control/EagleSans-Regular.ttf'), 20, nil, glyph_ranges)
 
    -->> Other Fonts
-	for k, v in ipairs({15, 18, 25, 30}) do
+	for k, v in ipairs({15, 18, 20, 25, 30}) do
 		fonts[v] = imgui.GetIO().Fonts:AddFontFromFileTTF(u8(getWorkingDirectory() .. '/Telegram Control/EagleSans-Regular.ttf'), v, nil, glyph_ranges)
 	end
 
@@ -231,6 +235,15 @@ imgui.OnFrame(function() return WinState[0] end,
          imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Список Обновлений:'), 30).x) / 2 )
 			imgui.FText(u8('Список Обновлений:'), 30)
          imgui.BeginChild('news', imgui.ImVec2(-1, -1), false)
+            imgui.BeginChild('##update6', imgui.ImVec2(-1, 86), true)
+            imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Обновление #1.5'), 30).x) / 2 )
+            imgui.FText(u8('Обновление #1.5'), 30)
+            imgui.FText(u8'- Исправлены баги и недочёты', 18)
+            imgui.FText(u8'- Диалоговое окно при обнаружении обновления', 18)
+            date_text = u8('От ') .. '06.10.2023'
+            imgui.SetCursorPos(imgui.ImVec2(imgui.GetWindowWidth() - getSize(date_text, 18).x - 5, 5))
+            imgui.FText('{TextDisabled}' .. date_text, 18)
+            imgui.EndChild()
             imgui.BeginChild('##update5', imgui.ImVec2(-1, 86), true)
             imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Обновление #1.4'), 30).x) / 2 )
             imgui.FText(u8('Обновление #1.4'), 30)
@@ -432,6 +445,41 @@ imgui.OnFrame(function() return WinState[0] end,
    end
 )
 
+imgui.OnFrame(function() return updateFrame[0] end,
+   function(player)
+      imgui.SetNextWindowPos(imgui.ImVec2(select(1, getScreenResolution()) / 2, select(2, getScreenResolution()) / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
+	   imgui.SetNextWindowSize(imgui.ImVec2(700, 400), imgui.Cond.FirstUseEver)
+		imgui.Begin('update', update, imgui.WindowFlags.NoResize + imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoTitleBar)
+         imgui.SetCursorPosX((imgui.GetWindowWidth() - getSize(u8('Telegram Control'), 30).x) / 2 )
+         imgui.FText('Telegram Control', 30)
+         imgui.Separator()
+         imgui.PushFont(fonts[25])
+         imgui.FText(u8'Доступно обновление! Новая версия:', 25)
+         imgui.SameLine()
+         imgui.TextColored(imgui.ImVec4(rainbow(2)), u8'#'..upd_res.version)
+         imgui.PopFont()
+
+         imgui.NewLine()
+
+         imgui.FText(u8('Список изменений:'), 25)
+         imgui.BeginChild('update', imgui.ImVec2(-1, -40), false)
+         for k, v in pairs(UPDATE.log) do 
+            for k, v in ipairs(v) do
+               imgui.SetCursorPosX(20)
+               imgui.FText(u8('{TextDisabled}%s) {Text}%s'):format(k, v), 20)
+            end
+         end
+         imgui.EndChild()
+
+         if imgui.AnimButton(u8('Отмена'), imgui.ImVec2(150, -1)) then updateFrame[0] = false end
+         imgui.SameLine(imgui.GetWindowWidth() - 155)
+         if imgui.AnimButton(u8('Установить'), imgui.ImVec2(150, -1)) then
+            updateFrame[0] = false
+            downloadUpdate(upd_res.url)
+         end
+      imgui.End()
+   end
+)
 -->> Mimgui Snippets
 function bringVec4To(from, to, start_time, duration)
    local timer = os.clock() - start_time
@@ -531,21 +579,6 @@ function imgui.AnimButton(label, size, duration)
    end
 
    return result
-end
-
-function imgui.CustomRadioButton(title, current_number, button_number, ...)
-   if tonumber(current_number.v) == tonumber(button_number) then
-       imgui.PushStyleColor(imgui.Col.Button, imgui.GetStyle().Colors[imgui.Col.CheckMark])
-       imgui.PushStyleColor(imgui.Col.ButtonHovered, imgui.GetStyle().Colors[imgui.Col.CheckMark])
-       imgui.PushStyleColor(imgui.Col.ButtonActive, imgui.GetStyle().Colors[imgui.Col.CheckMark])
-
-       local result = imgui.Button(title, ...)
-
-       imgui.PopStyleColor(3)
-       return result
-   else
-       if imgui.Button(title, ...) then current_number.v = tonumber(button_number) return true end
-   end
 end
 
 function imgui.Hint(str_id, hint_text, color, no_center)
@@ -687,6 +720,13 @@ function imgui.FText(text, font)
 	imgui.PopFont()
 end
 
+function rainbow(speed)
+   local r = math.floor(math.sin(os.clock() * speed) * 127 + 128) / 255
+   local g = math.floor(math.sin(os.clock() * speed + 2) * 127 + 128) / 255
+   local b = math.floor(math.sin(os.clock() * speed + 4) * 127 + 128) / 255
+   return r, g, b, 1
+end
+
 function getSize(text, font)
 	assert(text)
 	imgui.PushFont(fonts[font])
@@ -767,18 +807,15 @@ end
 
 -->> Autoupdate
 function checkUpdate()
-   local upd_res = nil
-
    asyncHttpRequest('GET', UPDATE.url, { headers = { ["Cache-Control"] = "no-cache" } }, 
-      function(res) upd_res = decodeJson(u8:decode(res.text)) end
+      function(res) upd_res = decodeJson(res.text) end
    )
 
    if upd_res then
+      if upd_res.changelog then UPDATE.log = upd_res.changelog end
       if thisScript().version ~= upd_res.version then
          if upd_res.url then
-            downloadUpdate(upd_res.url)
-         else
-            msg("Возникла ошибка при обновлении!")
+            updateFrame[0] = true
          end
       end
    else
@@ -787,9 +824,6 @@ function checkUpdate()
 end
 
 function downloadUpdate(url)
-   msg("Доступно обновление! Версия: {308ad9}#1.4")
-   msg("Устанавливаю новую версию...")
-   local update_status = 'process'
    downloadUrlToFile(url, thisScript().path, function(id, status, p1, p2)
       if status == dlstatus.STATUS_DOWNLOADINGDATA then
          update_status = 'process'
@@ -799,15 +833,16 @@ function downloadUpdate(url)
          update_status = 'failed' 
       end
    end)
-
-   while update_status == 'process' do wait(0) end
-   if update_status == 'failed' then
-      msg("Возникла ошибка при загрузке обновления!")
-   else
-      msg("Загрузка обновления завершена.")
-      thisScript():reload()
-      wait(1000)
-   end
+   lua_thread.create(function() 
+      while update_status == 'process' do wait(0) end
+      if update_status == 'failed' then
+         msg("Возникла ошибка при загрузке обновления!")
+      else
+         msg("Загрузка обновления завершена.")
+         wait(500) 
+         thisScript():reload()
+      end
+   end)
 end
 
 function asyncHttpRequest(method, url, args, resolve, reject)
@@ -862,7 +897,7 @@ end
 
 samp.onShowDialog = function(dialogId, style, title, button1, button2, text)
    if jsonConfig['notifications'].dial and not stats then
-      sendTelegramNotification('У вас открылся диалог!\n\n- Содержание диалога:\n'..text) 
+      sendTelegramNotification('У вас открылся диалог!\n\n- Содержание диалога:\n'..text)
    end
    if stats and dialogId==235 then
       sendTelegramNotification(title..':\n\n'..text)
@@ -907,6 +942,11 @@ function samp.onServerMessage(color, text)
    if text:find('__________________________________') and not text:find('%[%d+%]') then 
       if jsonConfig['notifications'].payDay then
          sendTelegramNotification('Вы получили PayDay!\n\nОрганизационная зарплата: '..givedMoney..'\nДепозит в банке: '..givedDep..'\nТекущая сумма в банке: '..bankMoney..'\nТекущая сумма на депозите: '..bankDep) 
+      end
+   end
+   if text:find('Вы не получили зарплату с организации, так как вы сейчас не в рабочей форме!') and not text:find('%[%d+%]') then
+      if jsonConfig['notifications'].payDay then
+         sendTelegramNotification('Ваш персонаж не в рабочей форме!')
       end
    end
    if text:find("Вам был добавлен предмет '(.+)'. Чтобы открыть инвентарь используйте клавишу 'Y' или /invent") and not text:find('%[%d+%]') then
@@ -954,7 +994,7 @@ function onReceivePacket(id)
 		[33] = {'Соединение потеряно!', 'ID_CONNECTION_LOST', jsonConfig['settings'].autoQ},
 	}
 	if LocalAutoQ[id] and LocalAutoQ[id][3] then
-		sendTelegramNotification(list_packet[id][1]..'\nВаша игра выключена.')
+		sendTelegramNotification(LocalAutoQ[id][1]..'\nВаша игра выключена.')
       ffi.C.ExitProcess(0)
 	end
    local LocalAutoOff = {
