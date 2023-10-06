@@ -2,7 +2,7 @@
     "version": "1.5",
     "url": "https://raw.githubusercontent.com/nist1-scripter/Telegram-Control/main/Telegram%20Control.lua",
     "changelog": {
-        "1.4": [
+        "1.5": [
             "Исправлены баги и недочёты",
             "Диалоговое окно при обнаружении обновления"
         ]
